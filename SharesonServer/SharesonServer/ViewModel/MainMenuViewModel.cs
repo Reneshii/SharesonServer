@@ -1,8 +1,9 @@
 ﻿using Shareson.Support;
 using SharesonServer.Model.MainMenu;
 using SharesonServer.Repository;
-using SharesonServer.Repository.SupportFunctions;
 using SharesonServer.View.ControlsView;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace SharesonServer.ViewModel
@@ -11,17 +12,30 @@ namespace SharesonServer.ViewModel
     {
         private MainMenuModel model;
         private MainMenuRepository repository;
-        private SqlHelper sql;
+        Task Task_CountConnectedClients;
+        bool RepeatCountConnectedClients_Task;
 
-        public bool IsServerWorks
+        public bool CanTurnOffServer
         {
             get
             {
-                return model._isServerWorks;
+                return model._CanTurnOffServer;
             }
             set
             {
-                model._isServerWorks = value;
+                model._CanTurnOffServer = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public bool CanTurnOnServer
+        {
+            get
+            {
+                return model._CanTurnOnServer;
+            }
+            set
+            {
+                model._CanTurnOnServer = value;
                 NotifyPropertyChanged();
             }
         }
@@ -31,7 +45,12 @@ namespace SharesonServer.ViewModel
             {
                 if (model._shutDownServer == null)
                 {
-                    //mainMenuModel._startServer = new RelayCommand(p => IsEnableStartServer, p => repository.CloseAllSockets());
+                    model._shutDownServer = new RelayCommand(p => CanTurnOffServer, p =>
+                    {
+                        CanTurnOnServer = repository.StopServer(); //enables button for turning on server again
+                        CanTurnOffServer = false; //disable button for turning off server
+                        RepeatCountConnectedClients_Task = false; // that ends checking loop
+                    });
                 }
                 return model._shutDownServer;
             }
@@ -41,18 +60,25 @@ namespace SharesonServer.ViewModel
         {
             get
             {
-                if(model._startServer == null)
+                if (model._startServer == null)
                 {
-                    IsServerWorks = IsServerWorks == false ? true : false;
-                    model._startServer = new RelayCommand(p => IsServerWorks, async p =>
+                    model._startServer = new RelayCommand(p => CanTurnOnServer, async p =>
                     {
+                        
                         MainMenuViewControlContent = new LoadingWindowControl();
-                        if(await sql.StartSQL() == true)
+                        if(await repository.sql.StartSQL() == true)
                         {
-                            IsServerWorks = repository.RunServer();
+                            CanTurnOffServer = repository.RunServer();
+                            CanTurnOnServer = false;
+                            Task_CountConnectedClients.Start();
+                        }
+                        else
+                        {
+                            //if not, then allow to proceed but without login on a client side and without sql server functions
+                            //return info to client that server is offline but can use it locally and limited by off functions
+                            //UpdateSQLStatus();
                         }
                         MainMenuViewControlContent = null;
-
                     });
                 }
                 return model._startServer;
@@ -71,6 +97,18 @@ namespace SharesonServer.ViewModel
                 NotifyPropertyChanged();
             }
         }
+        public int ConnectedClients
+        {
+            get
+            {
+                return model._ConnectedClients;
+            }
+            set
+            {
+                model._ConnectedClients = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public MainMenuViewModel()
         {
@@ -81,7 +119,24 @@ namespace SharesonServer.ViewModel
         {
             model = new MainMenuModel();
             repository = new MainMenuRepository();
-            sql = new SqlHelper();
+
+            InitializeTasks();
+
+            CanTurnOnServer = true;
+            CanTurnOffServer = false;
+            RepeatCountConnectedClients_Task = true;
+        }
+
+        private void InitializeTasks()
+        {
+            Task_CountConnectedClients = new Task(() =>
+            {
+                while (RepeatCountConnectedClients_Task == true)
+                {
+                    ConnectedClients = repository.ConnectedUsers();
+                    Thread.Sleep(3000);
+                }
+            });
         }
 
     }

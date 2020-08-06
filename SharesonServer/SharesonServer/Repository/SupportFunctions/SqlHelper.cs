@@ -1,4 +1,5 @@
 ﻿using SharesonServer.Model.Support;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,7 +35,7 @@ namespace SharesonServer.Repository.SupportFunctions
                 {
                     if(CompareCompatibilityOfTables() == true)
                     {
-                        //DropTable("MigrationHistory");
+                        DropTable("__MigrationHistory");
                         CreateDBBasedOnLatestMigrationVersionIfNotExists();
                     }
                     return true;
@@ -84,23 +85,30 @@ namespace SharesonServer.Repository.SupportFunctions
         /// </summary>
         public bool Exists(string dbToCheck)
         {
-            string CheckDB =$@"select name from master.dbo.sysdatabases where name = '"+ dbToCheck +"'";
-
-            var result = DBContext.Database.SqlQuery<string>(CheckDB).ToList();
-            if(result[0].Contains(dbToCheck))
+            string CheckDB = $@"select name from master.dbo.sysdatabases where name = '"+ dbToCheck +"'";
+            List<string> avaiableDBs = new List<string>();
+            try
             {
+                avaiableDBs = DBContext.Database.SqlQuery<string>(CheckDB).ToList();
+            }
+            catch { }
+
+            if (avaiableDBs.Contains(dbToCheck))
+            {
+                avaiableDBs = null;
                 return true;
             }
             else
             {
+                avaiableDBs = null;
                 return false;
             }
         }
-        //private void DropTable(string tableName)
-        //{
-        //    string Clear = @"DROP TABLE " + tableName ;
-        //    DBContext.Database.ExecuteSqlCommand(Clear);
-        //}
+        private void DropTable(string tableName)
+        {
+            string Clear = @"DROP TABLE " + tableName;
+            DBContext.Database.ExecuteSqlCommand(Clear);
+        }
         /// <summary>
         /// Returns account ID
         /// </summary>

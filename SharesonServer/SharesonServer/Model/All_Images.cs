@@ -3,7 +3,7 @@ using System.IO;
 
 namespace SharesonServer.Model
 {
-    public static class TotalImages
+    public static class All_Images
     {
         public static string[] TotaltemsInFoldersAnime;
         public static string[] TotaltemsInFoldersReal;

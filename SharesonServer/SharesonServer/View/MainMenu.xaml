@@ -10,6 +10,10 @@
 
     <Window.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CustomControls/Button1.xaml"/>
+                <ResourceDictionary Source="/CustomControls/Button2.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type Models:AwaitViewModel}">
                 <Views:LoadingWindowControl/>
             </DataTemplate>
@@ -28,11 +32,17 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="4*" />
         </Grid.ColumnDefinitions>
+        <StackPanel Background="#003B53" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Button Content="Start" Command="{Binding MainMenu, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Button1}" Width="120" Margin="20,0,0,0"/>
+            <Button Content="Server's settings" Command="{Binding ServersSettings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Button1}" Width="120" Margin="20,0,0,0"/>
+            <Button Content="Account's settings" Command="{Binding AccountsSettings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource Button1}" Width="120" Margin="20,0,0,0"/>
+        </StackPanel>
         <StackPanel Grid.Row="2" Grid.Column="0">
-            <Button Content="Launch Server" Command="{Binding StartServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsServerWorks, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
-            <Button Content="Shutdown Server" Command="{Binding ShutDownServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsServerWorks, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="100" />
-            <Label Content="{Binding ConnectedClients, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="14"/>
-
+            <Button Content="Launch Server" Command="{Binding StartServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanTurnOnServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+            <Button Content="Shutdown Server" Command="{Binding ShutDownServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanTurnOffServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="100" />
+            <GroupBox Header="Connected clients" BorderThickness="2">
+                <Label Content="{Binding ConnectedClients, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" FontSize="14"/>
+            </GroupBox>
         </StackPanel>
         <StackPanel Grid.Row="2" Grid.Column="1">
             <ContentControl Content="{Binding MainMenuViewControlContent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>

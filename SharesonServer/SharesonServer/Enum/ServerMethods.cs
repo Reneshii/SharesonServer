@@ -1,6 +1,6 @@
 ﻿namespace SharesonServer.Enum
 {
-    public enum AvailableImageMethods
+    public enum ServerMethods
     {
         GetImage,
         PutImage,
@@ -9,6 +9,9 @@
         GetImagesList,
         LoginToAccount,
         GetAccountInfo,
-
+        Ping,
+        Leave,
+        IsServerOn,
     }
+
 }

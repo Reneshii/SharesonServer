@@ -3,11 +3,11 @@
 namespace SharesonServer.View.ControlsView
 {
     /// <summary>
-    /// Logika interakcji dla klasy LoadingWindowControl.xaml
+    /// Logika interakcji dla klasy ServersSettingsControl.xaml
     /// </summary>
-    public partial class LoadingWindowControl : UserControl
+    public partial class ServersSettingsControl : UserControl
     {
-        public LoadingWindowControl()
+        public ServersSettingsControl()
         {
             InitializeComponent();
         }

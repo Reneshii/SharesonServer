@@ -11,7 +11,6 @@ namespace SharesonServer.Model
         public IPAddress iPAddress;
         public IPEndPoint iPEndPoint;
 
-        public byte[] dataReadyToSend;
         public string receivedData;
         public const int BufferSize = 10000;
         public byte[] buffer = new byte[BufferSize];

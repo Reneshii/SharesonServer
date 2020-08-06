@@ -1,0 +1,104 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="WhiteFog" A="50" R="255" G="255" B="255"/>
+    <Color x:Key="DarkFog" A="50" R="0" G="0" B="0"/>
+
+    <Style  x:Key="Button1" TargetType="Button">
+        <Setter Property="MaxHeight" Value="30"/>
+        <!--<Setter Property="MaxWidth" Value="90"/>-->
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border>
+                        <Border.CornerRadius>
+                            <CornerRadius BottomLeft="15" BottomRight="15" TopLeft="15" TopRight="15"/>
+                        </Border.CornerRadius>
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop x:Name="Background1Stop" Offset="0" />
+                                <GradientStop x:Name="Background2Stop" Offset="1" />
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <ContentPresenter 
+                            Content="{TemplateBinding Content}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <StopStoryboard BeginStoryboardName="LeaveAreaAndClick"/>
+                                <BeginStoryboard x:Name="EnterNoClick">
+                                    <Storyboard>
+                                        
+                                        <ColorAnimation Storyboard.TargetName="Background1Stop"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="{StaticResource WhiteFog}" Duration="0:0:0.01"/>
+                                        <ColorAnimation Storyboard.TargetName="Background2Stop"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="{StaticResource WhiteFog}" Duration="0:0:0.01"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        
+                                        <ColorAnimation Storyboard.TargetName="Background1Stop"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="Transparent" Duration="0:0:0.01"/>
+                                        <ColorAnimation Storyboard.TargetName="Background2Stop"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="Transparent" Duration="0:0:0.01"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsPressed" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)"
+                                                        To="Yellow" Duration="0:0:0.1"/>
+                                        <ColorAnimation Storyboard.TargetName="Background1Stop"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="{StaticResource DarkFog}" Duration="0:0:0.01"/>
+                                        <ColorAnimation Storyboard.TargetName="Background2Stop"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="{StaticResource DarkFog}" Duration="0:0:0.01"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+
+                            </MultiTrigger.EnterActions>
+                            <MultiTrigger.ExitActions>
+
+                                <BeginStoryboard x:Name="LeaveAreaAndClick">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="Background1Stop"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="Transparent" Duration="0:0:0.3"/>
+                                        <ColorAnimation Storyboard.TargetName="Background2Stop"
+                                                        Storyboard.TargetProperty="Color"
+                                                        To="Transparent" Duration="0:0:0.3"/>
+                                        <ColorAnimation Storyboard.TargetProperty="Foreground.(SolidColorBrush.Color)"
+                                                        To="White" Duration="0:0:0.3"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </MultiTrigger.ExitActions>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

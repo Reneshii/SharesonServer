@@ -66,25 +66,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Enum\AvailableImageMethods.cs" />
+    <Compile Include="Enum\ServerMethods.cs" />
     <Compile Include="Interface\IMainMenuRepository.cs" />
     <Compile Include="Migrations\202007211353289_Account.cs" />
     <Compile Include="Migrations\202007211353289_Account.designer.cs">
       <DependentUpon>202007211353289_Account.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Model\All_Images.cs" />
     <Compile Include="Model\ForViews\AwaitViewModel.cs" />
+    <Compile Include="Model\RequestHelperModel.cs" />
     <Compile Include="Model\Support\AccountModel.cs" />
     <Compile Include="Model\ImageOptionsModel.cs" />
     <Compile Include="Model\MainMenuModel.cs" />
     <Compile Include="Model\ServerHelperModel.cs" />
     <Compile Include="Model\Support\ReceivedImagesRequestModel.cs" />
-    <Compile Include="Model\TotalImages.cs" />
     <Compile Include="Repository\SupportFunctions\ImageOptions.cs" />
-    <Compile Include="Model\StoredFiles.cs" />
     <Compile Include="Repository\MainMenuRepository.cs" />
     <Compile Include="Repository\SupportFunctions\MailHelper.cs" />
-    <Compile Include="Repository\SupportFunctions\RequestsReader.cs" />
+    <Compile Include="Repository\SupportFunctions\RequestsHelper.cs" />
     <Compile Include="Repository\SupportFunctions\ServerHelper.cs" />
     <Compile Include="Repository\SupportFunctions\FilesAsString.cs" />
     <Compile Include="Repository\SupportFunctions\Log.cs" />
@@ -97,8 +97,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="View\ControlsView\AccountsSettingsControl.xaml.cs">
+      <DependentUpon>AccountsSettingsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ControlsView\LoadingWindowControl.xaml.cs">
       <DependentUpon>LoadingWindowControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ControlsView\ServersSettingsControl.xaml.cs">
+      <DependentUpon>ServersSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
@@ -136,11 +142,27 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Page Include="CustomControls\Button1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="CustomControls\Button2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="CustomControls\Loading.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\ControlsView\AccountsSettingsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\ControlsView\LoadingWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ControlsView\ServersSettingsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -7,7 +7,9 @@ namespace SharesonServer.Model.MainMenu
     {
         public ICommand _startServer { get; set; }
         public ICommand _shutDownServer { get; set; }
-        public bool _isServerWorks { get; set; }
         public object _MainMenuViewControlContent { get; set; }
+        public int _ConnectedClients { get; set; }
+        public bool _CanTurnOnServer { get; set; }
+        public bool _CanTurnOffServer { get; set; }
     }
 }
