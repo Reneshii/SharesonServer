@@ -1,9 +1,6 @@
 ﻿using Shareson.Support;
 using SharesonServer.Model.MainMenu;
-using SharesonServer.Repository;
-using SharesonServer.View.ControlsView;
-using System.Threading;
-using System.Threading.Tasks;
+using SharesonServer.ViewModel.ControlsViewModel;
 using System.Windows.Input;
 
 namespace SharesonServer.ViewModel
@@ -11,80 +8,59 @@ namespace SharesonServer.ViewModel
     public class MainMenuViewModel : Property_Changed
     {
         private MainMenuModel model;
-        private MainMenuRepository repository;
-        Task Task_CountConnectedClients;
-        bool RepeatCountConnectedClients_Task;
+        private StartMenuControlViewModel startMenuControl;
+        private ServerSettingsControlViewModel serversSettingsControl;
+        private AccountsSettingsControlViewModel accountsSettingsControl;
 
-        public bool CanTurnOffServer
+        #region Commands
+        public ICommand MenuStartBtn
         {
             get
             {
-                return model._CanTurnOffServer;
-            }
-            set
-            {
-                model._CanTurnOffServer = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public bool CanTurnOnServer
-        {
-            get
-            {
-                return model._CanTurnOnServer;
-            }
-            set
-            {
-                model._CanTurnOnServer = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public ICommand ShutDownServer
-        {
-            get
-            {
-                if (model._shutDownServer == null)
+                if(model._MenuStartBtn == null)
                 {
-                    model._shutDownServer = new RelayCommand(p => CanTurnOffServer, p =>
+                    model._MenuStartBtn = new RelayCommand(p => true, p =>
                     {
-                        CanTurnOnServer = repository.StopServer(); //enables button for turning on server again
-                        CanTurnOffServer = false; //disable button for turning off server
-                        RepeatCountConnectedClients_Task = false; // that ends checking loop
+                        MainMenuViewControlContent = startMenuControl;
                     });
                 }
-                return model._shutDownServer;
+                return model._MenuStartBtn;
             }
             set { }
         }
-        public ICommand StartServer
+        public ICommand MenuServersSettingsBtn
         {
             get
             {
-                if (model._startServer == null)
+                if (model._MenuServersSettingsBtn == null)
                 {
-                    model._startServer = new RelayCommand(p => CanTurnOnServer, async p =>
+                    model._MenuServersSettingsBtn = new RelayCommand(p => true, p =>
                     {
-                        
-                        MainMenuViewControlContent = new LoadingWindowControl();
-                        if(await repository.sql.StartSQL() == true)
-                        {
-                            CanTurnOffServer = repository.RunServer();
-                            CanTurnOnServer = false;
-                            Task_CountConnectedClients.Start();
-                        }
-                        else
-                        {
-                            //if not, then allow to proceed but without login on a client side and without sql server functions
-                            //return info to client that server is offline but can use it locally and limited by off functions
-                            //UpdateSQLStatus();
-                        }
-                        MainMenuViewControlContent = null;
+                        MainMenuViewControlContent = serversSettingsControl;
                     });
                 }
-                return model._startServer;
+                return model._MenuServersSettingsBtn;
             }
             set { }
         }
+        public ICommand MenuAccountsSettingsBtn
+        {
+            get
+            {
+                if (model._MenuAccountsSettingsBtn == null)
+                {
+                    model._MenuAccountsSettingsBtn = new RelayCommand(p => true, p =>
+                    {
+                        MainMenuViewControlContent = accountsSettingsControl;
+                    });
+                }
+                return model._MenuAccountsSettingsBtn;
+            }
+            set { }
+        }
+        #endregion
+
+        #region Properties
         public object MainMenuViewControlContent
         {
             get
@@ -97,18 +73,7 @@ namespace SharesonServer.ViewModel
                 NotifyPropertyChanged();
             }
         }
-        public int ConnectedClients
-        {
-            get
-            {
-                return model._ConnectedClients;
-            }
-            set
-            {
-                model._ConnectedClients = value;
-                NotifyPropertyChanged();
-            }
-        }
+        #endregion
 
         public MainMenuViewModel()
         {
@@ -118,26 +83,9 @@ namespace SharesonServer.ViewModel
         private void Initialize()
         {
             model = new MainMenuModel();
-            repository = new MainMenuRepository();
-
-            InitializeTasks();
-
-            CanTurnOnServer = true;
-            CanTurnOffServer = false;
-            RepeatCountConnectedClients_Task = true;
+            startMenuControl = new StartMenuControlViewModel();
+            serversSettingsControl = new ServerSettingsControlViewModel();
+            accountsSettingsControl = new AccountsSettingsControlViewModel();
         }
-
-        private void InitializeTasks()
-        {
-            Task_CountConnectedClients = new Task(() =>
-            {
-                while (RepeatCountConnectedClients_Task == true)
-                {
-                    ConnectedClients = repository.ConnectedUsers();
-                    Thread.Sleep(3000);
-                }
-            });
-        }
-
     }
 }

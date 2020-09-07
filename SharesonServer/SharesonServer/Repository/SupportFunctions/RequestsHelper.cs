@@ -1,14 +1,13 @@
 ﻿using Newtonsoft.Json;
-using Shareson.Support;
 using SharesonServer.Enum;
 using SharesonServer.Model;
 using SharesonServer.Model.Support;
+using System.Net.Sockets;
 
 namespace SharesonServer.Repository.SupportFunctions
 {
     public class RequestsHelper
     {
-        private Log Error = new Log($@"C:\Users\Reneshi\Downloads", "ErrorLogServer.txt");
         private SqlHelper sql;
 
         public RequestsHelper(SqlHelper sqlHelper)
@@ -32,7 +31,7 @@ namespace SharesonServer.Repository.SupportFunctions
             return availableMethod = ServerMethods.GetImage; // default
         }
 
-        private AccountModel DeserializeLoginRequest(string request)
+        private AccountModel DeserializeAccountServiceRequest(string request)
         {
             AccountModel accountModel = new AccountModel();
             accountModel = JsonConvert.DeserializeObject<AccountModel>(request);
@@ -40,10 +39,10 @@ namespace SharesonServer.Repository.SupportFunctions
             return accountModel;
         }
 
-        private ReceivedImagesRequestModel DeserializeImagesRequestAsJson(string request)
+        private ImagesRequestModel DeserializeImagesRequest(string request)
         {
-            ReceivedImagesRequestModel model = new ReceivedImagesRequestModel();
-            model = JsonConvert.DeserializeObject<ReceivedImagesRequestModel>(request);
+            ImagesRequestModel model = new ImagesRequestModel();
+            model = JsonConvert.DeserializeObject<ImagesRequestModel>(request);
 
             return model;
         }
@@ -52,14 +51,14 @@ namespace SharesonServer.Repository.SupportFunctions
         {
             ImageOptions convert = new ImageOptions();
 
-            var model = DeserializeImagesRequestAsJson(request);
+            var model = DeserializeImagesRequest(request);
             var result = convert.GetImageAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
             return result;
         }
         public byte[] GetRandomImage(string request)
         {
             ImageOptions convert = new ImageOptions();
-            var model = DeserializeImagesRequestAsJson(request);
+            var model = DeserializeImagesRequest(request);
             var result = convert.GetImageAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
             return result;
         }
@@ -82,12 +81,28 @@ namespace SharesonServer.Repository.SupportFunctions
 
         }
 
-        public byte[] LoginToAccount(string request)
+        public byte[] MessageAsBytes(string text)
         {
-            var data = DeserializeLoginRequest(request);
-            var ID = sql.LogInToUserAccount(data.Email, data.Password);
+            var toReturn = System.Text.Encoding.ASCII.GetBytes(text);
+            return toReturn;
+        }
+
+        public byte[] LoginToAccount(string request, Socket client, ref System.Collections.Generic.List<FullClientInfoModel> model)
+        {
+            var data = DeserializeAccountServiceRequest(request);
+            var ID = sql.LogInToUserAccountAndGetID(data.Email, data.Password);
             string json = JsonConvert.SerializeObject(ID);
-            var result = System.Text.Encoding.ASCII.GetBytes(json);
+            var result = MessageAsBytes(json);
+
+            model.Add(new FullClientInfoModel()
+            {
+                Email = data.Email,
+                Login = data.Login,
+                Name = data.Name,
+                ID = ID,
+                IP = client.RemoteEndPoint.ToString(),
+
+            });
             return result;
         }
 
@@ -95,6 +110,13 @@ namespace SharesonServer.Repository.SupportFunctions
         {
             var result = new byte[1];
             return result;
+        }
+
+        public string CreateAccount(string request)
+        {
+            var data = DeserializeAccountServiceRequest(request);
+            var result = sql.CreateAccount(data, true);
+            return result;            
         }
         //public byte[] ClientLeave(ref List<Client> list, Socket toRemove )
         //{
@@ -109,7 +131,7 @@ namespace SharesonServer.Repository.SupportFunctions
         /// <summary>
         /// Separate method type from request. In string array first is method name and second request.
         /// </summary>
-        public string[] CleanRequest(string rawRequest)
+        public string[] SpreadRequest(string rawRequest)
         {
             string Method;
             string Request = rawRequest;

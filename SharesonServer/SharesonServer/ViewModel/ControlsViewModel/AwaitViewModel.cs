@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharesonServer.Model.ForViews
+namespace SharesonServer.ViewModel.ControlsViewModel
 {
     public class AwaitViewModel
     {

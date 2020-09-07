@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharesonServer.Repository
+﻿
+namespace SharesonServer.Interface
 {
     public interface IMainMenuRepository
     {
-        void SetupServer();
-        void AcceptCallBack(IAsyncResult AR);
-        void ReceiveCallBack(IAsyncResult AR);
-        void CloseAllSockets();
+        bool RunServer();
+        bool StopServer();
+        int ConnectedUsers();
+        bool RepeatCountConnectedClients_Task { get; set; }
     }
 }

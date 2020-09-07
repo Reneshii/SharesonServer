@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace SharesonServer.Model
 {
     public class ImageOptionsModel

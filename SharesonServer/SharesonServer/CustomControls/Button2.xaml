@@ -8,7 +8,7 @@
 
     <Style  x:Key="Button2" TargetType="Button">
         
-        <Setter Property="MaxHeight" Value="30"/>
+        <Setter Property="MaxHeight" Value="80"/>
         <!--<Setter Property="MaxWidth" Value="90"/>-->
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>

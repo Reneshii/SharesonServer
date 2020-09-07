@@ -10,7 +10,6 @@ namespace SharesonServer.Repository.SupportFunctions
     public class ImageOptions
     {
         private ImageOptionsModel model = new ImageOptionsModel();
-        Log error = new Log($@"C:\Users\Reneshi\Downloads", "ImageConvertErrorLogServer.txt");
 
         public byte[] GetImageInfo(string PathToFolder, string FileName)
         {
@@ -42,18 +41,16 @@ namespace SharesonServer.Repository.SupportFunctions
 
         public byte[] GetImageAsBytes(string PathToFolder, string FileName, string[] ExcludedExtensions = null)
         {
-            try
+            GetImageInfo(PathToFolder, FileName);
+            byte[] dataToReturn;
+
+            if (Directory.Exists(PathToFolder))
             {
-                GetImageInfo(PathToFolder, FileName);
-                byte[] dataToReturn;
+                string searchingFile = PathToFolder + FileName;
 
-                if (Directory.Exists(PathToFolder))
+                if (File.Exists(searchingFile))
                 {
-                    string searchingFile = PathToFolder + FileName;
-
-                    if (File.Exists(searchingFile))
-                    {
-                        if(ExcludedExtensions != null && ExcludedExtensions.Length > 0)
+                    if (ExcludedExtensions != null && ExcludedExtensions.Length > 0)
                         foreach (var item in ExcludedExtensions)
                         {
                             if (FileName.Contains(item))
@@ -62,38 +59,31 @@ namespace SharesonServer.Repository.SupportFunctions
                             }
                         }
 
-                        FileInfo info = new FileInfo(searchingFile);
-                        dataToReturn = new byte[info.Length];
-                        using (FileStream fstream = File.OpenRead(searchingFile))
-                        {
-                            fstream.Read(dataToReturn, 0, dataToReturn.Length);
-                        }
-                        return dataToReturn;
-                    }
-                    else
+                    FileInfo info = new FileInfo(searchingFile);
+                    dataToReturn = new byte[info.Length];
+                    using (FileStream fstream = File.OpenRead(searchingFile))
                     {
-                        searchingFile = PathToFolder + "FileDoNotExist.png";
-                        FileInfo info = new FileInfo(searchingFile);
-                        dataToReturn = new byte[info.Length];
-                        using (FileStream fstream = File.OpenRead(searchingFile))
-                        {
-                            fstream.Read(dataToReturn, 0, dataToReturn.Length);
-                        }
-                        return dataToReturn;
-                        
+                        fstream.Read(dataToReturn, 0, dataToReturn.Length);
                     }
+                    return dataToReturn;
                 }
                 else
                 {
-                    return null;
+                    searchingFile = PathToFolder + "FileDoNotExist.png";
+                    FileInfo info = new FileInfo(searchingFile);
+                    dataToReturn = new byte[info.Length];
+                    using (FileStream fstream = File.OpenRead(searchingFile))
+                    {
+                        fstream.Read(dataToReturn, 0, dataToReturn.Length);
+                    }
+                    return dataToReturn;
                 }
+
             }
-            catch(Exception e)
+            else
             {
-                error.Add(e.ToString() + "\nERROR ZWIĄZANY Z PRZETWARZANIEM OBRAZU");
                 return null;
             }
-
         }
     }
 }

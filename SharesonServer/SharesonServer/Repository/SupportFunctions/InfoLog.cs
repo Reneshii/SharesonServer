@@ -4,25 +4,25 @@ using System.Text;
 
 namespace Shareson.Support
 {
-    public class Log
+    public class InfoLog
     {
         public string PathToFolder { get; }
-        public string PathToFile { get; }
+        public string FileName { get; }
         public string PathToFileLog { get; set; }
 
-        public Log(string directory, string file)
+        public InfoLog(string directory, string file)
         {
             PathToFolder = directory;
-            PathToFile = file;
+            FileName = file;
 
-            PathToFileLog = directory + PathToFile;
+            PathToFileLog = directory + FileName;
         }
 
         public void Add(string error)
         {
             if (Directory.Exists(PathToFolder))
             {
-                using (FileStream file = new FileStream(PathToFolder + "/" + PathToFile, FileMode.Append))
+                using (FileStream file = new FileStream(PathToFolder + "/" + FileName, FileMode.Append))
                 {
                     using (StreamWriter stream = new StreamWriter(file, encoding: Encoding.UTF8))
                     {

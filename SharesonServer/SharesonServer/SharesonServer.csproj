@@ -37,6 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>server.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
@@ -48,6 +51,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -67,31 +71,44 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Enum\ServerMethods.cs" />
+    <Compile Include="Enum\SqlTablesNames.cs" />
     <Compile Include="Interface\IMainMenuRepository.cs" />
-    <Compile Include="Migrations\202007211353289_Account.cs" />
-    <Compile Include="Migrations\202007211353289_Account.designer.cs">
-      <DependentUpon>202007211353289_Account.cs</DependentUpon>
+    <Compile Include="Interface\IMainMenuRepositoryFunctionsWithLimit.cs" />
+    <Compile Include="Interface\IMainMenuRepositoryFunctionsWithoutLimit.cs" />
+    <Compile Include="Migrations\202008221051152_AccountModelAdded.cs" />
+    <Compile Include="Migrations\202008221051152_AccountModelAdded.designer.cs">
+      <DependentUpon>202008221051152_AccountModelAdded.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\All_Images.cs" />
-    <Compile Include="Model\ForViews\AwaitViewModel.cs" />
+    <Compile Include="Model\ForControls\ServersSettingsModel.cs" />
+    <Compile Include="Model\ForControls\StartMenuModel.cs" />
     <Compile Include="Model\RequestHelperModel.cs" />
+    <Compile Include="Model\ServerSettingsModel.cs" />
     <Compile Include="Model\Support\AccountModel.cs" />
     <Compile Include="Model\ImageOptionsModel.cs" />
     <Compile Include="Model\MainMenuModel.cs" />
     <Compile Include="Model\ServerHelperModel.cs" />
-    <Compile Include="Model\Support\ReceivedImagesRequestModel.cs" />
+    <Compile Include="Model\Support\AvailableFoldersModel.cs" />
+    <Compile Include="Model\Support\FullClientInfoModel.cs" />
+    <Compile Include="Model\Support\ImagesRequestModel.cs" />
+    <Compile Include="Repository\ServerSettingsRepository.cs" />
+    <Compile Include="Repository\StartMainMenuRepository.cs" />
     <Compile Include="Repository\SupportFunctions\ImageOptions.cs" />
-    <Compile Include="Repository\MainMenuRepository.cs" />
+    <Compile Include="Repository\SupportFunctions\InfoLog.cs" />
     <Compile Include="Repository\SupportFunctions\MailHelper.cs" />
     <Compile Include="Repository\SupportFunctions\RequestsHelper.cs" />
     <Compile Include="Repository\SupportFunctions\ServerHelper.cs" />
     <Compile Include="Repository\SupportFunctions\FilesAsString.cs" />
-    <Compile Include="Repository\SupportFunctions\Log.cs" />
     <Compile Include="Repository\SupportFunctions\Property_Changed.cs" />
     <Compile Include="Repository\SupportFunctions\RelayCommand.cs" />
     <Compile Include="Model\Support\SharesonServerDbContext.cs" />
     <Compile Include="Repository\SupportFunctions\SqlHelper.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="ViewModel\ControlsViewModel\AccountsSettingsControlViewModel.cs" />
+    <Compile Include="ViewModel\ControlsViewModel\AwaitViewModel.cs" />
+    <Compile Include="ViewModel\ControlsViewModel\ServerSettingsControlViewModel.cs" />
+    <Compile Include="ViewModel\ControlsViewModel\StartMenuControlViewModel.cs" />
     <Compile Include="ViewModel\MainMenuViewModel.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -105,6 +122,9 @@
     </Compile>
     <Compile Include="View\ControlsView\ServersSettingsControl.xaml.cs">
       <DependentUpon>ServersSettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ControlsView\StartMenuControl.xaml.cs">
+      <DependentUpon>StartMenuControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
@@ -124,8 +144,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Migrations\202007211353289_Account.resx">
-      <DependentUpon>202007211353289_Account.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202008221051152_AccountModelAdded.resx">
+      <DependentUpon>202008221051152_AccountModelAdded.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -140,7 +160,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="server.ico" />
+  </ItemGroup>
   <ItemGroup>
     <Page Include="CustomControls\Button1.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -163,6 +185,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\ControlsView\ServersSettingsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ControlsView\StartMenuControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

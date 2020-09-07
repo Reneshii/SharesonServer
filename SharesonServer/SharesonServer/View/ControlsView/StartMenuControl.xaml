@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="SharesonServer.View.ControlsView.StartMenuControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Views="clr-namespace:SharesonServer.View.ControlsView"
+             xmlns:ViewModels="clr-namespace:SharesonServer.ViewModel.ControlsViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CustomControls/Button1.xaml"/>
+                <ResourceDictionary Source="/CustomControls/Button2.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <DataTemplate DataType="{x:Type ViewModels:AwaitViewModel}">
+                <Views:LoadingWindowControl/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0">
+            <Button Content="Launch Server" Command="{Binding StartServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanTurnOnServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="0,0,0,10"/>
+            <Button Content="Shutdown Server" Command="{Binding ShutDownServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanTurnOffServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="100" Margin="0,0,0,10"/>
+            <GroupBox Header="Connected clients" BorderThickness="2">
+                <Label Content="{Binding ConnectedClients, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" FontSize="14"/>
+            </GroupBox>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3">
+            <DataGrid ItemsSource="{Binding UsersSource, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" CanUserAddRows="False" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
+                    <DataGridTextColumn Header="User Name" Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="Login" Binding="{Binding Login}"/>
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}"/>
+                    <DataGridTextColumn Header="Connection Time" Binding="{Binding ConnectionTime}"/>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Remove" Command ="{Binding DisconnectUser_btn}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+        <!--<StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Background="White">
+            <ContentControl Content="{Binding StartMenuControlContent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>-->
+    </Grid>
+</UserControl>

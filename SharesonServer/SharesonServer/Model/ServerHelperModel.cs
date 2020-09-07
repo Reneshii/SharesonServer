@@ -19,7 +19,6 @@ namespace SharesonServer.Model
         public class Client
         {
             public Socket socket;
-            public byte[] MessageToSend;
             public bool IsTaskPerformJob = false;
             public Task Task;
         }

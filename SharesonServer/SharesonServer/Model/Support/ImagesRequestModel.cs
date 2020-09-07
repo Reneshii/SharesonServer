@@ -2,9 +2,8 @@
 
 namespace SharesonServer.Model.Support
 {
-    public class ReceivedImagesRequestModel
+    public class ImagesRequestModel
     {
-        public string Method;
         public string PathToDirectory;
         public string FileName;
         public string[] ExcludedExtensions;

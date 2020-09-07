@@ -1,32 +1,36 @@
-﻿using SharesonServer.Model;
+﻿using Shareson.Support;
+using SharesonServer.Model;
+using SharesonServer.Model.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using static SharesonServer.Model.ServerHelperModel;
 
 namespace SharesonServer.Repository.SupportFunctions
 {
     public class ServerHelper
     {
-        private ServerHelperModel Model;
-        public ManualResetEvent ProceedExecuteRequest;
+        //public ManualResetEvent ProceedExecuteRequest;
         public List<Client> ConnectedClients;
-        RequestsHelper requestHelper;
-        SqlHelper sql;
+        public List<FullClientInfoModel> clientInfoModel;
+        private RequestsHelper requestHelper;
+        private SqlHelper sql;
+        private Socket serverSocket;
+        private ServerHelperModel Model;
 
         public bool AwaitsNewConnections = false;
         public bool AwaitsNewRequests = false;
         public bool IsServerOn = false;
 
 
-        public ServerHelper()
+        public ServerHelper(SqlHelper sqlInstance = null)
         {
-            sql = new SqlHelper();
+            sql = sqlInstance != null ? sqlInstance: null;
             ConnectedClients = new List<Client>();
+            clientInfoModel = new List<FullClientInfoModel>();
             Model = new ServerHelperModel();
             requestHelper = new RequestsHelper(sql);
             IsServerOn = false;
@@ -36,6 +40,8 @@ namespace SharesonServer.Repository.SupportFunctions
 
         public Socket SetupServer()
         {
+            Socket socket;
+
             All_Images.TotaltemsInFoldersAnime = System.IO.Directory.GetFiles(@"D:\Nowy folder\Anime");
             All_Images.TotaltemsInFoldersReal = System.IO.Directory.GetFiles(@"D:\Nowy folder\Real");
             All_Images.TotaltemsInFoldersMemy = System.IO.Directory.GetFiles(@"D:\Nowy folder\Memy");
@@ -44,27 +50,97 @@ namespace SharesonServer.Repository.SupportFunctions
             Model.iPAddress = Model.ipHostInfo.AddressList[0];
             Model.iPEndPoint = new IPEndPoint(Model.iPAddress, 11000);
 
-            Socket socket = new Socket(Model.iPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            socket = new Socket(Model.iPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
             socket.Bind(Model.iPEndPoint);
+
             socket.Listen(100);
+
+            serverSocket = socket;
 
             return socket;
         }
 
-        public bool StartListening(Socket serverSetup)
+        public void DisposeConnection()
         {
-            Socket listener = serverSetup;
+            lock(ConnectedClients)
+            {
+                foreach (Client item in ConnectedClients)
+                {
+                    item.Task.Dispose();
+                    item.socket.Disconnect(false);
+                    item.IsTaskPerformJob = false;
+                }
+            }
+            ConnectedClients = new List<Client>();
+        }
 
-            try
+        public void CloseServerSocket()
+        {
+            this.serverSocket.Close(0);
+        }
+
+        //private bool StartListeningAsync(Socket serverSetup)
+        //{
+        //    Socket listener;
+        //    if (serverSetup != null)
+        //    {
+        //        listener = serverSetup;
+        //    }
+        //    else
+        //    {
+        //        listener = serverSocket;
+        //    }
+            
+        //    try
+        //    {
+        //        listener.BeginAccept(new AsyncCallback(AcceptCallBack), listener);
+        //        return true;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return false;
+        //    }
+        //}
+        public void StartListening(Socket serverSetup = null)
+        {
+            Socket listener;
+            if (serverSetup != null)
             {
-                listener.BeginAccept(new AsyncCallback(AcceptCallBack), listener);
-                return true;
+                listener = serverSetup;
             }
-            catch (Exception e)
+            else
             {
-                return false;
+                listener = serverSocket;
             }
+
+            while (AwaitsNewConnections)
+            {
+                try
+                {
+                    Socket clientSocket = listener.Accept();
+
+                    if (clientSocket != null)
+                    {
+                        lock (ConnectedClients)
+                        {
+                            ConnectedClients.Add(new Client
+                            {
+                                socket = clientSocket,
+                            });
+                        }
+                    }
+                }
+                catch(Exception e)
+                {
+                    return;
+                }
+            }
+        }
+
+        public void StopListening()
+        {
+
         }
 
         private void AcceptCallBack(IAsyncResult AR)
@@ -78,13 +154,14 @@ namespace SharesonServer.Repository.SupportFunctions
             }
             catch (SocketException se)
             {
-                listener.BeginAccept(new AsyncCallback(AcceptCallBack), listener);
                 return;
             }
-
             lock (ConnectedClients)
             {
-                ConnectedClients.Add(new Client { socket = handler });
+                ConnectedClients.Add(new Client
+                {
+                    socket = handler,
+                });
             }
             if (AwaitsNewConnections == true)
             {
@@ -94,12 +171,20 @@ namespace SharesonServer.Repository.SupportFunctions
 
         public void Receive(Socket client)
         {
-            Socket socket = client;
+            try
+            {
+                Socket socket = client;
 
-            socket.BeginReceive(Model.buffer, 0, ServerHelperModel.BufferSize, 0, new AsyncCallback(ReceiveCallBack), socket);
+                socket.BeginReceive(Model.buffer, 0, ServerHelperModel.BufferSize, 0, new AsyncCallback(ReceiveCallBack), socket);
+            }
+            catch(Exception e)
+            {
+                InfoLog infoLog = new InfoLog($@"C:\Users\Reneshi\Downloads","ServerReceive.txt");
+                infoLog.Add(e.ToString());
+            }
             //ProceedExecuteRequest.WaitOne();
         }
-        bool SocketConnected(Socket client)
+        bool IsStillSocketConnected(Socket client)
         {
             bool part1 = client.Poll(2000, SelectMode.SelectRead);
             bool part2 = (client.Available == 0);
@@ -114,7 +199,7 @@ namespace SharesonServer.Repository.SupportFunctions
             int contentSize;
             
             Socket client = (Socket)AR.AsyncState;
-            if (SocketConnected(client))
+            if (IsStillSocketConnected(client))
             {
                 try
                 {
@@ -133,7 +218,7 @@ namespace SharesonServer.Repository.SupportFunctions
                             }
                             else
                             {
-                                KickClient(client);
+                                DisconnectSocket(client);
                                 return;
                             }
                         }
@@ -146,7 +231,7 @@ namespace SharesonServer.Repository.SupportFunctions
                             }
                             else
                             {
-                                KickClient(client);
+                                DisconnectSocket(client);
                                 return;
                             }
                         }
@@ -157,15 +242,14 @@ namespace SharesonServer.Repository.SupportFunctions
                 }
                 catch (SocketException se)
                 {
-                    client.Close();
-                    var toRemove = ConnectedClients.Find(h => h.socket == client);
-                    ConnectedClients.Remove(toRemove);
+                    DisconnectSocket(client);
+
                     return;
                 }
             }
             else
             {
-                ConnectedClients.Remove(ConnectedClients.Where(f => f.socket == client).FirstOrDefault());
+                DisconnectSocket(client);
                 return;
             }
         }
@@ -191,16 +275,22 @@ namespace SharesonServer.Repository.SupportFunctions
             }
         }
 
-        private void KickClient(Socket client)
+        public void DisconnectSocket(Socket user)
         {
-            client.Shutdown(SocketShutdown.Both);
-            client.Dispose();
-            client.Disconnect(false);
+            lock (ConnectedClients)
+            {
+                lock(clientInfoModel)
+                {
+                    clientInfoModel.Remove(clientInfoModel.Where(f => string.Equals(user.RemoteEndPoint.ToString(), f.IP)).FirstOrDefault());
+                }
+                user.Close();
+                ConnectedClients.Remove(ConnectedClients.Where(f => f.socket == user).FirstOrDefault());
+            }
         }
 
         private void ExecuteMethod(string content, Socket client)
         {
-            var separatedRequest = requestHelper.CleanRequest(content);
+            var separatedRequest = requestHelper.SpreadRequest(content);
             var MethodType = requestHelper.GetServerMethod(separatedRequest[0]);
 
             switch (MethodType)
@@ -229,7 +319,10 @@ namespace SharesonServer.Repository.SupportFunctions
                     }
                 case Enum.ServerMethods.LoginToAccount:
                     {
-                        Send(client, requestHelper.LoginToAccount(separatedRequest[1]));
+                        lock(clientInfoModel)
+                        {
+                            Send(client, requestHelper.LoginToAccount(separatedRequest[1], client, ref clientInfoModel));
+                        }
                         break;
                     }
                 case Enum.ServerMethods.GetAccountInfo:
@@ -239,6 +332,12 @@ namespace SharesonServer.Repository.SupportFunctions
                     }
                 case Enum.ServerMethods.Ping:
                     {
+                        break;
+                    }
+                case Enum.ServerMethods.CreateAccount:
+                    {
+                        requestHelper.CreateAccount(separatedRequest[1]);
+                        Send(client, requestHelper.MessageAsBytes("AccountCreated"));
                         break;
                     }
                 //case Enum.ServerMethods.Leave:

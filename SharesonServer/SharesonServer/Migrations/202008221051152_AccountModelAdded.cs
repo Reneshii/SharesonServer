@@ -3,12 +3,12 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Account : DbMigration
+    public partial class AccountModelAdded : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.Account",
+                "dbo.AccountModels",
                 c => new
                     {
                         ID = c.String(nullable: false, maxLength: 128),
@@ -25,7 +25,7 @@
         
         public override void Down()
         {
-            DropTable("dbo.Account");
+            DropTable("dbo.AccountModels");
         }
     }
 }

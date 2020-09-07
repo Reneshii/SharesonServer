@@ -12,6 +12,7 @@
         Ping,
         Leave,
         IsServerOn,
+        CreateAccount,
     }
 
 }

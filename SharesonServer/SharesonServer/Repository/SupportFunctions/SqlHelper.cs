@@ -18,7 +18,7 @@ namespace SharesonServer.Repository.SupportFunctions
         {
             Task<bool> SQL_TASK = Task<bool>.Factory.StartNew(() =>
             {
-                var exists = Exists("Shareson");
+                var exists = DBExists("Shareson");
                 if (exists == false)
                 {
                     var DBCreated = CreateDBBasedOnLatestMigrationVersionIfNotExists();
@@ -33,18 +33,16 @@ namespace SharesonServer.Repository.SupportFunctions
                 }
                 else
                 {
-                    if(CompareCompatibilityOfTables() == true)
+                    if(AreAllTablesExists() == false)
                     {
-                        DropTable("__MigrationHistory");
+                        //DropTable("__MigrationHistory");
                         CreateDBBasedOnLatestMigrationVersionIfNotExists();
                     }
                     return true;
                 }
-
             });
             return SQL_TASK;
         }
-
         /// <summary>
         /// Create new db or adds missing tables. IMPORTANT = Delete migration history in DB if table is missing.
         /// </summary>
@@ -63,19 +61,23 @@ namespace SharesonServer.Repository.SupportFunctions
             }
         }
         /// <summary>
-        /// Returns true if table is missing
+        /// Returns false if table is missing
         /// </summary>
-        public bool CompareCompatibilityOfTables()
+        public bool AreAllTablesExists()
         {
-            bool AddMissingTablesOnLatestMigrationVersion = false;
-            string[] tablesInCode = { "Account" };
+            bool AddMissingTablesOnLatestMigrationVersion = true;
+            string[] sqlTablesNames = System.Enum.GetNames(typeof(Enum.SqlTablesNames));
+
             var tablesInDB = DBContext.Database.SqlQuery<string>("SELECT name FROM Shareson.sys.tables").ToArray();
 
-            foreach (var item in tablesInCode)
+            foreach (var tablesDeclaredInCode in sqlTablesNames)
             {
-                if (!tablesInDB.Contains(item))
+                foreach (var tablesInSql in tablesInDB)
                 {
-                    AddMissingTablesOnLatestMigrationVersion = true;
+                    if (/*tablesInDB.Equals(item)*/!string.Equals(tablesInSql, tablesDeclaredInCode, System.StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        AddMissingTablesOnLatestMigrationVersion = false;
+                    }
                 }
             }
             return AddMissingTablesOnLatestMigrationVersion;
@@ -83,7 +85,7 @@ namespace SharesonServer.Repository.SupportFunctions
         /// <summary>
         /// Returns true if db with given name exists
         /// </summary>
-        public bool Exists(string dbToCheck)
+        public bool DBExists(string dbToCheck)
         {
             string CheckDB = $@"select name from master.dbo.sysdatabases where name = '"+ dbToCheck +"'";
             List<string> avaiableDBs = new List<string>();
@@ -112,16 +114,25 @@ namespace SharesonServer.Repository.SupportFunctions
         /// <summary>
         /// Returns account ID
         /// </summary>
-        public string LogInToUserAccount(string Email, string Password)
+        public string LogInToUserAccountAndGetID(string Email, string Password)
         {
             var acc = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault();
-            acc.LoggedIn = true;
-            DBContext.Accounts.Attach(acc);
-            DBContext.SaveChanges();
+            if(acc!= null)
+            {
+                acc.LoggedIn = true;
+                DBContext.Accounts.Attach(acc);
+                DBContext.SaveChanges();
 
-            string accountID = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault().ID;
-            return accountID;
+                string accountID = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault().ID;
+                return accountID;
+            }
+            else
+            {
+                return "";
+            }
+
         }
+
         public void LogOutUser(string Email, string Password)
         {
             var acc = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault();
@@ -130,19 +141,19 @@ namespace SharesonServer.Repository.SupportFunctions
             DBContext.SaveChanges();
         }
        
-        public bool CreateAccount(string Email, string Login, string Password, string Name, string Surname)
+        public bool CreateAccount(AccountModel accountModel/*string Email, string Login, string Password, string Name, string Surname*/)
         {
-            if(!IsAccountExist(Email,Password))
+            if(!IsAccountExist(accountModel.Email, accountModel.Password))
             {
                 System.Guid guid = System.Guid.NewGuid();
                 DBContext.Accounts.Add(new Model.Support.AccountModel
                 {
                     ID = guid.ToString(),
-                    Email = Email, 
-                    Login = Login,
-                    Password = Password,
-                    Name = Name, 
-                    Surname = Surname,
+                    Email = accountModel.Email, 
+                    Login = accountModel.Login,
+                    Password = accountModel.Password,
+                    Name = accountModel.Name, 
+                    Surname = accountModel.Surname,
                     LoggedIn = false
                 });
                 DBContext.SaveChanges();
@@ -153,17 +164,43 @@ namespace SharesonServer.Repository.SupportFunctions
                 return false;
             }
         }
+        public string CreateAccount(AccountModel accountModel, bool preciseExceptionCase)
+        {
+            if (!IsAccountExist(accountModel.Email, accountModel.Password) && preciseExceptionCase == true)
+            {
+                System.Guid guid = System.Guid.NewGuid();
+                DBContext.Accounts.Add(new Model.Support.AccountModel
+                {
+                    ID = guid.ToString(),
+                    Email = accountModel.Email,
+                    Login = accountModel.Login,
+                    Password = accountModel.Password,
+                    Name = accountModel.Name,
+                    Surname = accountModel.Surname,
+                    LoggedIn = false
+                });
+                DBContext.SaveChanges();
+                return "Account Created";
+            }
+            else if(IsAccountExist(accountModel.Email, accountModel.Password) && preciseExceptionCase == true)
+            {
+                return "Account Already Exists";
+            }
+            else
+            {
+                return "Account Creation Faild";
+            }
+        }
 
         public bool IsAccountExist(string Email, string Password)
         {
-            var emailResult = DBContext.Accounts.Select(f => f.Email == Email).FirstOrDefault();
-            if (emailResult)
+            var emailResult = DBContext.Accounts.Where(f => f.Email == Email).FirstOrDefault();
+            if (emailResult != null)
             {
                 var passResult = DBContext.Accounts.Select(f => f.Password == Password).FirstOrDefault();
                 if (passResult)
                 {
                     return true;
-
                 }
                 else
                 {
@@ -174,6 +211,11 @@ namespace SharesonServer.Repository.SupportFunctions
             {
                 return false;
             }
+        }
+
+        public List<AccountModel> GetAccountsInfo()
+        {
+            return DBContext.Accounts.Where(f => f.ID != null).ToList();
         }
     }
 }

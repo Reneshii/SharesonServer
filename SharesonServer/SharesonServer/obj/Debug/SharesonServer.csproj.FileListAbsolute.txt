@@ -81,13 +81,11 @@ C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\o
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\ControlsView\LoadingWindowControl.g.cs
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\MainMenu.g.cs
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\App.g.cs
-C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer_MarkupCompile.cache
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer_MarkupCompile.lref
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\CustomControls\Loading.baml
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\MainMenu.baml
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.g.resources
-C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.Migrations.Account.resources
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.Properties.Resources.resources
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.csproj.GenerateResource.cache
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.csproj.CoreCompileInputs.cache
@@ -100,4 +98,8 @@ C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\o
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\ControlsView\ServersSettingsControl.g.cs
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\ControlsView\AccountsSettingsControl.baml
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\ControlsView\ServersSettingsControl.baml
+C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\ControlsView\StartMenuControl.g.cs
+C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\ControlsView\StartMenuControl.baml
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.csprojAssemblyReference.cache
+C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.Migrations.AccountModelAdded.resources
