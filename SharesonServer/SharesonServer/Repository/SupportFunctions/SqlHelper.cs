@@ -7,6 +7,7 @@ namespace SharesonServer.Repository.SupportFunctions
 {
     public class SqlHelper
     {
+        public static bool SQLOn;
         SharesonServerDbContext DBContext;
 
         public SqlHelper()
@@ -24,11 +25,13 @@ namespace SharesonServer.Repository.SupportFunctions
                     var DBCreated = CreateDBBasedOnLatestMigrationVersionIfNotExists();
                     if(DBCreated == true)
                     {
-                        return true;
+                        SQLOn = true;
+                        return SQLOn;
                     }
                     else
                     {
-                        return false;
+                        SQLOn = false;
+                        return SQLOn;
                     }
                 }
                 else
@@ -38,7 +41,8 @@ namespace SharesonServer.Repository.SupportFunctions
                         //DropTable("__MigrationHistory");
                         CreateDBBasedOnLatestMigrationVersionIfNotExists();
                     }
-                    return true;
+                    SQLOn = true;
+                    return SQLOn;
                 }
             });
             return SQL_TASK;

@@ -113,10 +113,13 @@ namespace SharesonServer.ViewModel.ControlsViewModel
         {
             var path = new System.Windows.Forms.FolderBrowserDialog();
             path.ShowDialog();
-            AvailableFolders.Add(new AvailableFoldersModel()
+            if(!string.IsNullOrEmpty(path.SelectedPath))
             {
-                PathToFolder = path.SelectedPath,
-            });
+                AvailableFolders.Add(new AvailableFoldersModel()
+                {
+                    PathToFolder = path.SelectedPath,
+                });
+            }
         }
     }
 }

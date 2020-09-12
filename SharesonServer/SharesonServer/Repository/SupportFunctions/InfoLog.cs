@@ -17,6 +17,10 @@ namespace Shareson.Support
 
             PathToFileLog = directory + FileName;
         }
+        public InfoLog(string fullPath)
+        {
+            PathToFileLog = fullPath;
+        }
 
         public void Add(string error)
         {

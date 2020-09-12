@@ -9,9 +9,7 @@
         GetImagesList,
         LoginToAccount,
         GetAccountInfo,
-        Ping,
         Leave,
-        IsServerOn,
         CreateAccount,
     }
 

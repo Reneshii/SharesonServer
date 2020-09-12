@@ -68,14 +68,6 @@ namespace SharesonServer.Repository.SupportFunctions
 
         }
 
-        //public byte[] GetImageInfo(string request)
-        //{
-        //    ImageOptions convert = new ImageOptions();
-
-        //    var result = convert.GetImageInfo(PathToFolder, FileName);
-        //    return null;
-        //}
-
         public void GetImagesList()
         {
 
@@ -118,15 +110,11 @@ namespace SharesonServer.Repository.SupportFunctions
             var result = sql.CreateAccount(data, true);
             return result;            
         }
-        //public byte[] ClientLeave(ref List<Client> list, Socket toRemove )
-        //{
-        //    lock(list)
-        //    {
-        //        list.Remove(list.Where(f => f.socket == toRemove).FirstOrDefault());
-        //    }
-        //    var result = System.Text.Encoding.ASCII.GetBytes("Disconnected");
-        //    return result;
-        //}
+        public byte[] MethodDisabledMessage()
+        {
+            string info = "This method is disabled by server";
+            return System.Text.Encoding.ASCII.GetBytes(info);
+        }
 
         /// <summary>
         /// Separate method type from request. In string array first is method name and second request.
@@ -135,7 +123,6 @@ namespace SharesonServer.Repository.SupportFunctions
         {
             string Method;
             string Request = rawRequest;
-
 
             if (Request.Contains("<Meth>"))
             {

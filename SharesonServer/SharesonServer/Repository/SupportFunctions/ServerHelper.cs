@@ -1,12 +1,15 @@
 ﻿using Shareson.Support;
 using SharesonServer.Model;
 using SharesonServer.Model.Support;
+using SharesonServer.Properties;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using static SharesonServer.Model.ServerHelperModel;
 
 namespace SharesonServer.Repository.SupportFunctions
@@ -41,10 +44,24 @@ namespace SharesonServer.Repository.SupportFunctions
         public Socket SetupServer()
         {
             Socket socket;
+            foreach (var item in Settings.Default.AvailableFoldersModel)
+            {
+                var filesFullNames = System.IO.Directory.GetFiles(item.PathToFolder);
 
-            All_Images.TotaltemsInFoldersAnime = System.IO.Directory.GetFiles(@"D:\Nowy folder\Anime");
-            All_Images.TotaltemsInFoldersReal = System.IO.Directory.GetFiles(@"D:\Nowy folder\Real");
-            All_Images.TotaltemsInFoldersMemy = System.IO.Directory.GetFiles(@"D:\Nowy folder\Memy");
+                All_Images.AllFiles.Add(new FoldersAndFiles()
+                {
+                    DirectoryPath = item.PathToFolder,
+                    Files = filesFullNames
+                });
+
+                foreach (var it in All_Images.AllFiles)
+                {
+                    for (int i = 0; i < it.Files.Length; i++)
+                    {
+                        it.Files[i] = Path.GetFileName(it.Files[i]);
+                    }
+                }
+            }
 
             Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             Model.iPAddress = Model.ipHostInfo.AddressList[0];
@@ -69,7 +86,7 @@ namespace SharesonServer.Repository.SupportFunctions
                 {
                     item.Task.Dispose();
                     item.socket.Disconnect(false);
-                    item.IsTaskPerformJob = false;
+                    item.IsTaskPerform = false;
                 }
             }
             ConnectedClients = new List<Client>();
@@ -210,9 +227,13 @@ namespace SharesonServer.Repository.SupportFunctions
                         content = Model.sb.ToString();
                         if (content.IndexOf("<EOS>") > -1)
                         {
-                            content = content.Remove(content.IndexOf("<EOS>"), "<EOS>".Length);
+                            content = content.Remove(content.IndexOf("<EOS>")); // It prevents an error related with overriding request before is executed
+                            if (!string.IsNullOrEmpty(content))
+                            {
+                                ExecuteMethod(content, client);
+                            }
 
-                            if(AwaitsNewRequests == true)
+                            if (AwaitsNewRequests == true)
                             {
                                 client.BeginReceive(Model.buffer, 0, ServerHelperModel.BufferSize, SocketFlags.None, ReceiveCallBack, client);
                             }
@@ -236,8 +257,6 @@ namespace SharesonServer.Repository.SupportFunctions
                             }
                         }
                         //ProceedExecuteRequest.Set(); /*ProceedExecuteRequest.Reset();*/
-                       
-                        ExecuteMethod(content, client);
                     }
                 }
                 catch (SocketException se)
@@ -321,7 +340,14 @@ namespace SharesonServer.Repository.SupportFunctions
                     {
                         lock(clientInfoModel)
                         {
-                            Send(client, requestHelper.LoginToAccount(separatedRequest[1], client, ref clientInfoModel));
+                            if(SqlHelper.SQLOn)
+                            {
+                                Send(client, requestHelper.LoginToAccount(separatedRequest[1], client, ref clientInfoModel));
+                            }
+                            else
+                            {
+                                Send(client, requestHelper.MethodDisabledMessage());
+                            }
                         }
                         break;
                     }
@@ -330,14 +356,17 @@ namespace SharesonServer.Repository.SupportFunctions
                         //Send(client, requestHelper.GetImageInfo(separatedRequest[1]));
                         break;
                     }
-                case Enum.ServerMethods.Ping:
-                    {
-                        break;
-                    }
                 case Enum.ServerMethods.CreateAccount:
                     {
-                        requestHelper.CreateAccount(separatedRequest[1]);
-                        Send(client, requestHelper.MessageAsBytes("AccountCreated"));
+                        if(SqlHelper.SQLOn)
+                        {
+                            requestHelper.CreateAccount(separatedRequest[1]);
+                            Send(client, requestHelper.MessageAsBytes("AccountCreated"));
+                        }
+                        else
+                        {
+                            Send(client, requestHelper.MethodDisabledMessage());
+                        }
                         break;
                     }
                 //case Enum.ServerMethods.Leave:
@@ -345,16 +374,8 @@ namespace SharesonServer.Repository.SupportFunctions
                 //        requestHelper.ClientLeave(ref ConnectedClients, client);
                 //        break;
                 //    }
-                case Enum.ServerMethods.IsServerOn:
-                    {
-
-                        break;
-                    }
-                default:
-                    {
-                        break;
-                    }
             }
+
         }
     }
 }

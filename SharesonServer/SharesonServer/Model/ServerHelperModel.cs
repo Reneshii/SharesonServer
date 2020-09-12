@@ -19,7 +19,7 @@ namespace SharesonServer.Model
         public class Client
         {
             public Socket socket;
-            public bool IsTaskPerformJob = false;
+            public bool IsTaskPerform = false;
             public Task Task;
         }
     }

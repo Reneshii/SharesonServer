@@ -5,10 +5,10 @@ using SharesonServer.Model.Support;
 using SharesonServer.Repository;
 using SharesonServer.View.ControlsView;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace SharesonServer.ViewModel.ControlsViewModel
@@ -16,10 +16,10 @@ namespace SharesonServer.ViewModel.ControlsViewModel
     public class StartMenuControlViewModel : Property_Changed
     {
         private StartMenuModel model;
+        private InfoLog log;
         private IMainMenuRepositoryFunctionsWithoutLimit repositoryFull;
         private IMainMenuRepositoryFunctionsWithLimit repositoryLimited;
-        private InfoLog log = new InfoLog($@"C:\Users\Reneshi\Downloads", "ServerLogs.txt");
-         
+       
         private Task Task_CountConnectedClients;
 
         #region ICommand 
@@ -41,13 +41,14 @@ namespace SharesonServer.ViewModel.ControlsViewModel
                             {
                                 CanTurnOffServer = repositoryFull.RunServer();
                                 InitializeAndRunTasksForFullRepository();
-
+                                CounterVisability = Visibility.Visible;
                             }
                             else
                             {
                                 repositoryLimited = new StartMainMenuRepository();
                                 repositoryFull = null;
 
+                                CounterVisability = Visibility.Hidden;
                                 ServerWithoutSQL = repositoryLimited.RunServerWithLimitedFunctions();
                             }
 
@@ -113,6 +114,18 @@ namespace SharesonServer.ViewModel.ControlsViewModel
             set
             {
                 model._UsersSource = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public Visibility CounterVisability
+        {
+            get
+            {
+                return model._CounterVisability;
+            }
+            set
+            {
+                model._CounterVisability = value;
                 NotifyPropertyChanged();
             }
         }
@@ -182,7 +195,7 @@ namespace SharesonServer.ViewModel.ControlsViewModel
         {
             model = new StartMenuModel();
             UsersSource = new ObservableCollection<FullClientInfoModel>();
-
+            log = new InfoLog(Properties.Settings.Default.LogsFilePath);
             CanTurnOnServer = true;
             CanTurnOffServer = false;
         }
@@ -243,7 +256,7 @@ namespace SharesonServer.ViewModel.ControlsViewModel
                             UsersSource.Add(item);
                         }
                     });
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                 }
             }
             else
@@ -251,7 +264,7 @@ namespace SharesonServer.ViewModel.ControlsViewModel
                 while (repositoryLimited.RepeatCountConnectedClients_Task == true)
                 {
                     ConnectedClients = repositoryLimited.ConnectedUsers();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                 }
             }
         }

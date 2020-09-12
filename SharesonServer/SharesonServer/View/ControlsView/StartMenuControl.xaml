@@ -34,8 +34,8 @@
         <StackPanel Grid.Column="0">
             <Button Content="Launch Server" Command="{Binding StartServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanTurnOnServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="80" Margin="0,0,0,10"/>
             <Button Content="Shutdown Server" Command="{Binding ShutDownServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanTurnOffServer, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="100" Margin="0,0,0,10"/>
-            <GroupBox Header="Connected clients" BorderThickness="2">
-                <Label Content="{Binding ConnectedClients, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" FontSize="14"/>
+            <GroupBox Header="Connected clients" BorderThickness="2" Visibility="{Binding CounterVisability, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                <Label Content="{Binding ConnectedClients, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" FontSize="14" Visibility="{Binding CounterVisability, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
             </GroupBox>
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3">

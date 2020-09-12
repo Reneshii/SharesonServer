@@ -14,7 +14,6 @@ namespace SharesonServer.Repository
         private ServerHelper server;
         private Task Task_startListening;
         private Task Task_startExecuteRequests;
-        private int ConnectedClients;
         private int lastConnectedClientsNumber = 0;
         public bool RepeatCountConnectedClients_Task { get; set; }
 
@@ -86,14 +85,13 @@ namespace SharesonServer.Repository
         {
             while (true)
             {
-                ConnectedClients = server.ConnectedClients.Count;
                 if (server.ConnectedClients.Count > 0)
                 {
                     lock (server.ConnectedClients)
                     {
                         foreach (Client client in server.ConnectedClients)
                         {
-                            if (client.IsTaskPerformJob == false)
+                            if (client.IsTaskPerform == false)
                             {
                                 client.Task = new Task(() =>
                                 {
@@ -101,7 +99,7 @@ namespace SharesonServer.Repository
                                 });
 
                                 client.Task.Start();
-                                client.IsTaskPerformJob = true;
+                                client.IsTaskPerform = true;
                             }
                         }
                     }
@@ -112,11 +110,10 @@ namespace SharesonServer.Repository
 
         public int ConnectedUsers()
         {
-            int currentConnectedClientsNumber = ConnectedClients;
+            int currentConnectedClientsNumber = server.ConnectedClients.Count; 
             if (lastConnectedClientsNumber != currentConnectedClientsNumber)
             {
-                lastConnectedClientsNumber = currentConnectedClientsNumber;
-                return lastConnectedClientsNumber;
+                return currentConnectedClientsNumber;
             }
             else
             {
