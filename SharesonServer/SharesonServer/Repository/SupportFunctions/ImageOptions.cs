@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Shareson.Support;
 using SharesonServer.Model;
-using System;
 using System.IO;
 using System.Text;
 
@@ -11,7 +9,7 @@ namespace SharesonServer.Repository.SupportFunctions
     {
         private ImageOptionsModel model = new ImageOptionsModel();
 
-        public byte[] GetImageInfo(string PathToFolder, string FileName)
+        private ImageOptionsModel GetImageInfo(string PathToFolder, string FileName)
         {
             byte[] dataToReturn;
 
@@ -29,19 +27,20 @@ namespace SharesonServer.Repository.SupportFunctions
                     model.CreationTime = info.CreationTime.Date.ToString("dd/MM/yyyy");
                     model.Creator = File.GetAccessControl(searchingFile).GetOwner(typeof(System.Security.Principal.NTAccount)).ToString();
 
-                    string json = JsonConvert.SerializeObject(model);
+                    //string json = JsonConvert.SerializeObject(model);
 
-                    dataToReturn = Encoding.ASCII.GetBytes(json);
+                    //dataToReturn = Encoding.ASCII.GetBytes(json);
 
-                    return dataToReturn;
+                    //return dataToReturn;
+                    return model;
                 }
             }
             return null;
         }
 
-        public byte[] GetImageAsBytes(string PathToFolder, string FileName, string[] ExcludedExtensions = null)
+        public byte[] GetImageWithInfoAsBytes(string PathToFolder, string FileName, string[] ExcludedExtensions = null)
         {
-            GetImageInfo(PathToFolder, FileName);
+            ImageOptionsModel model = GetImageInfo(PathToFolder, FileName);
             byte[] dataToReturn;
 
             if (Directory.Exists(PathToFolder))
@@ -61,11 +60,19 @@ namespace SharesonServer.Repository.SupportFunctions
 
                     FileInfo info = new FileInfo(searchingFile);
                     dataToReturn = new byte[info.Length];
+
                     using (FileStream fstream = File.OpenRead(searchingFile))
                     {
                         fstream.Read(dataToReturn, 0, dataToReturn.Length);
                     }
-                    return dataToReturn;
+
+                    model.Size = info.Length;
+                    model.Image = dataToReturn;
+
+                    var json = JsonConvert.SerializeObject(model);
+                    var jsonAsBytes = Encoding.ASCII.GetBytes(json);
+                    
+                    return jsonAsBytes;
                 }
                 else
                 {
@@ -76,9 +83,15 @@ namespace SharesonServer.Repository.SupportFunctions
                     {
                         fstream.Read(dataToReturn, 0, dataToReturn.Length);
                     }
-                    return dataToReturn;
-                }
 
+                    model.Size = info.Length;
+                    model.Image = dataToReturn;
+
+                    var json = JsonConvert.SerializeObject(model);
+                    var jsonAsBytes = Encoding.ASCII.GetBytes(json);
+
+                    return jsonAsBytes;
+                }
             }
             else
             {

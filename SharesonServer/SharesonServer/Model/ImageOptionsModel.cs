@@ -8,5 +8,6 @@ namespace SharesonServer.Model
         public string Creator { get; set; }
         public string CreationTime { get; set; }
         public string Folder { get; set; }
+        public byte[] Image { get; set; }
     }
 }

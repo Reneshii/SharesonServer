@@ -80,7 +80,7 @@
       <DependentUpon>202008221051152_AccountModelAdded.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Model\Support\All_Images.cs" />
+    <Compile Include="Repository\SupportFunctions\All_Images.cs" />
     <Compile Include="Model\ForControls\ServersSettingsModel.cs" />
     <Compile Include="Model\ForControls\StartMenuModel.cs" />
     <Compile Include="Model\RequestHelperModel.cs" />

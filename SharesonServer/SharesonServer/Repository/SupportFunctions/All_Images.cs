@@ -1,10 +1,9 @@
 ﻿using SharesonServer.Model.Support;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
-namespace SharesonServer.Model
+namespace SharesonServer.Repository.SupportFunctions
 {
     public static class All_Images
     {

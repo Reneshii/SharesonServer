@@ -118,7 +118,7 @@ namespace SharesonServer.Repository.SupportFunctions
         /// <summary>
         /// Returns account ID
         /// </summary>
-        public string LogInToUserAccountAndGetID(string Email, string Password)
+        public void LogInToUserAccount(string Email, string Password)
         {
             var acc = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault();
             if(acc!= null)
@@ -128,13 +128,28 @@ namespace SharesonServer.Repository.SupportFunctions
                 DBContext.SaveChanges();
 
                 string accountID = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault().ID;
-                return accountID;
+                
             }
-            else
-            {
-                return "";
-            }
+        }
+        public AccountModel GetUserInfo(string Email, string Password)
+        {
+            var acc = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault();
 
+            if (acc == null)
+            {
+                acc = new AccountModel()
+                {
+                    Email = string.Empty,
+                    Login = string.Empty,
+                    Name = string.Empty,
+                    ID = string.Empty,
+                    Password = string.Empty,
+                    Surname = string.Empty,
+                };
+            }
+            
+
+            return acc;
         }
 
         public void LogOutUser(string Email, string Password)
@@ -217,7 +232,7 @@ namespace SharesonServer.Repository.SupportFunctions
             }
         }
 
-        public List<AccountModel> GetAccountsInfo()
+        public List<AccountModel> GetUsersInfo()
         {
             return DBContext.Accounts.Where(f => f.ID != null).ToList();
         }

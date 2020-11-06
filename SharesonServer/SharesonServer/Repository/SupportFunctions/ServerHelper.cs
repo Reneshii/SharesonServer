@@ -9,7 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using static SharesonServer.Model.ServerHelperModel;
 
 namespace SharesonServer.Repository.SupportFunctions
@@ -191,12 +190,11 @@ namespace SharesonServer.Repository.SupportFunctions
             try
             {
                 Socket socket = client;
-
                 socket.BeginReceive(Model.buffer, 0, ServerHelperModel.BufferSize, 0, new AsyncCallback(ReceiveCallBack), socket);
             }
-            catch(Exception e)
+            catch(Exception e)                                                  
             {
-                InfoLog infoLog = new InfoLog($@"C:\Users\Reneshi\Downloads","ServerReceive.txt");
+                InfoLog infoLog = new InfoLog(Settings.Default.LogsFilePath);
                 infoLog.Add(e.ToString());
             }
             //ProceedExecuteRequest.WaitOne();

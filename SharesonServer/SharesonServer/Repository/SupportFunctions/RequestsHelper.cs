@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SharesonServer.Enum;
-using SharesonServer.Model;
 using SharesonServer.Model.Support;
+using System;
 using System.Net.Sockets;
 
 namespace SharesonServer.Repository.SupportFunctions
@@ -52,14 +52,14 @@ namespace SharesonServer.Repository.SupportFunctions
             ImageOptions convert = new ImageOptions();
 
             var model = DeserializeImagesRequest(request);
-            var result = convert.GetImageAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+            var result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
             return result;
         }
         public byte[] GetRandomImage(string request)
         {
             ImageOptions convert = new ImageOptions();
             var model = DeserializeImagesRequest(request);
-            var result = convert.GetImageAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
+            var result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
             return result;
         }
 
@@ -81,27 +81,30 @@ namespace SharesonServer.Repository.SupportFunctions
 
         public byte[] LoginToAccount(string request, Socket client, ref System.Collections.Generic.List<FullClientInfoModel> model)
         {
-            var data = DeserializeAccountServiceRequest(request);
-            var ID = sql.LogInToUserAccountAndGetID(data.Email, data.Password);
-            string json = JsonConvert.SerializeObject(ID);
-            var result = MessageAsBytes(json);
-
-            model.Add(new FullClientInfoModel()
+            try
             {
-                Email = data.Email,
-                Login = data.Login,
-                Name = data.Name,
-                ID = ID,
-                IP = client.RemoteEndPoint.ToString(),
+                var data = DeserializeAccountServiceRequest(request);
+                sql.LogInToUserAccount(data.Email, data.Password);
+                var dataToSend = sql.GetUserInfo(data.Email, data.Password);
+                string json = JsonConvert.SerializeObject(dataToSend);
+                var result = MessageAsBytes(json);
 
-            });
-            return result;
-        }
+                model.Add(new FullClientInfoModel()
+                {
+                    Email = data.Email,
+                    Login = data.Login,
+                    Name = data.Name,
+                    ID = dataToSend.ID,
+                    IP = client.RemoteEndPoint.ToString(),
 
-        public byte[] GetAccountInfo()
-        {
-            var result = new byte[1];
-            return result;
+                });
+                return result;
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+            
         }
 
         public string CreateAccount(string request)
