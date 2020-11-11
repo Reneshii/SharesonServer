@@ -27,11 +27,6 @@ namespace SharesonServer.Repository.SupportFunctions
                     model.CreationTime = info.CreationTime.Date.ToString("dd/MM/yyyy");
                     model.Creator = File.GetAccessControl(searchingFile).GetOwner(typeof(System.Security.Principal.NTAccount)).ToString();
 
-                    //string json = JsonConvert.SerializeObject(model);
-
-                    //dataToReturn = Encoding.ASCII.GetBytes(json);
-
-                    //return dataToReturn;
                     return model;
                 }
             }
@@ -59,6 +54,10 @@ namespace SharesonServer.Repository.SupportFunctions
                         }
 
                     FileInfo info = new FileInfo(searchingFile);
+                    if(!info.Exists)
+                    {
+                        return GetImageWithInfoAsBytes(PathToFolder, All_Images.GetRandom(PathToFolder), ExcludedExtensions);
+                    }
                     dataToReturn = new byte[info.Length];
 
                     using (FileStream fstream = File.OpenRead(searchingFile))

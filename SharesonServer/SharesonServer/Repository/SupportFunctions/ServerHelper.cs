@@ -47,13 +47,13 @@ namespace SharesonServer.Repository.SupportFunctions
             {
                 var filesFullNames = System.IO.Directory.GetFiles(item.PathToFolder);
 
-                All_Images.AllFiles.Add(new FoldersAndFiles()
+                All_Images.ImagesData.Add(new FoldersAndFiles()
                 {
                     DirectoryPath = item.PathToFolder,
                     Files = filesFullNames
                 });
 
-                foreach (var it in All_Images.AllFiles)
+                foreach (var it in All_Images.ImagesData)
                 {
                     for (int i = 0; i < it.Files.Length; i++)
                     {
@@ -228,7 +228,7 @@ namespace SharesonServer.Repository.SupportFunctions
                             content = content.Remove(content.IndexOf("<EOS>")); // It prevents an error related with overriding request before is executed
                             if (!string.IsNullOrEmpty(content))
                             {
-                                ExecuteMethod(content, client);
+                                ExecuteRequest(content, client);
                             }
 
                             if (AwaitsNewRequests == true)
@@ -305,16 +305,28 @@ namespace SharesonServer.Repository.SupportFunctions
             }
         }
 
-        private void ExecuteMethod(string content, Socket client)
+        private void ExecuteRequest(string content, Socket client)
         {
             var separatedRequest = requestHelper.SpreadRequest(content);
             var MethodType = requestHelper.GetServerMethod(separatedRequest[0]);
+            Model.Support.SQL.AccountModelForShareson model = new Model.Support.SQL.AccountModelForShareson();
+            if (separatedRequest.Length > 2 && !string.IsNullOrEmpty(separatedRequest[2]))
+            {
+                model = Newtonsoft.Json.JsonConvert.DeserializeObject<Model.Support.SQL.AccountModelForShareson>(separatedRequest[2]);
+            }
 
             switch (MethodType)
             {
                 case Enum.ServerMethods.GetImage:
                     {
-                        Send(client, requestHelper.GetImage(separatedRequest[1]));
+                        if (SqlHelper.SQLStatus)
+                        {
+                            Send(client, requestHelper.GetImage(separatedRequest[1], model));
+                        }
+                        else
+                        {
+                            Send(client, requestHelper.GetImage(separatedRequest[1]));
+                        }
                         break;
                     }
                 case Enum.ServerMethods.PutImage:
@@ -323,7 +335,14 @@ namespace SharesonServer.Repository.SupportFunctions
                     }
                 case Enum.ServerMethods.GetRandomImage:
                     {
-                        Send(client, requestHelper.GetRandomImage(separatedRequest[1]));
+                        if (SqlHelper.SQLStatus)
+                        {
+                            Send(client, requestHelper.GetRandomImage(separatedRequest[1],model));
+                        }
+                        else
+                        {
+                            Send(client, requestHelper.GetRandomImage(separatedRequest[1]));
+                        }
                         break;
                     }
                 case Enum.ServerMethods.GetImageInfo:
@@ -336,16 +355,13 @@ namespace SharesonServer.Repository.SupportFunctions
                     }
                 case Enum.ServerMethods.LoginToAccount:
                     {
-                        lock(clientInfoModel)
+                        if (SqlHelper.SQLStatus)
                         {
-                            if(SqlHelper.SQLOn)
-                            {
-                                Send(client, requestHelper.LoginToAccount(separatedRequest[1], client, ref clientInfoModel));
-                            }
-                            else
-                            {
-                                Send(client, requestHelper.MethodDisabledMessage());
-                            }
+                            Send(client, requestHelper.LoginToAccount(separatedRequest[1]));
+                        }
+                        else
+                        {
+                            Send(client, requestHelper.LoginToAccount(separatedRequest[1],false));
                         }
                         break;
                     }
@@ -356,7 +372,7 @@ namespace SharesonServer.Repository.SupportFunctions
                     }
                 case Enum.ServerMethods.CreateAccount:
                     {
-                        if(SqlHelper.SQLOn)
+                        if(SqlHelper.SQLStatus)
                         {
                             requestHelper.CreateAccount(separatedRequest[1]);
                             Send(client, requestHelper.MessageAsBytes("AccountCreated"));

@@ -117,7 +117,7 @@ namespace SharesonServer.ViewModel.ControlsViewModel
             {
                 AvailableFolders.Add(new AvailableFoldersModel()
                 {
-                    PathToFolder = path.SelectedPath,
+                    PathToFolder = path.SelectedPath + @"\",
                 });
             }
         }

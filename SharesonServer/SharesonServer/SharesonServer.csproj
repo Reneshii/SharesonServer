@@ -75,17 +75,23 @@
     <Compile Include="Interface\IMainMenuRepository.cs" />
     <Compile Include="Interface\IMainMenuRepositoryFunctionsWithLimit.cs" />
     <Compile Include="Interface\IMainMenuRepositoryFunctionsWithoutLimit.cs" />
-    <Compile Include="Migrations\202008221051152_AccountModelAdded.cs" />
-    <Compile Include="Migrations\202008221051152_AccountModelAdded.designer.cs">
-      <DependentUpon>202008221051152_AccountModelAdded.cs</DependentUpon>
+    <Compile Include="Migrations\202011101233490_Account.cs" />
+    <Compile Include="Migrations\202011101233490_Account.designer.cs">
+      <DependentUpon>202011101233490_Account.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202011101235546_DirectoriesAccess.cs" />
+    <Compile Include="Migrations\202011101235546_DirectoriesAccess.designer.cs">
+      <DependentUpon>202011101235546_DirectoriesAccess.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Model\Support\AccountModelForShareson.cs" />
+    <Compile Include="Model\Support\SQL\AccountModel.cs" />
+    <Compile Include="Model\Support\SQL\DirectoriesAccessedInAccount.cs" />
     <Compile Include="Repository\SupportFunctions\All_Images.cs" />
     <Compile Include="Model\ForControls\ServersSettingsModel.cs" />
     <Compile Include="Model\ForControls\StartMenuModel.cs" />
     <Compile Include="Model\RequestHelperModel.cs" />
     <Compile Include="Model\ServerSettingsModel.cs" />
-    <Compile Include="Model\Support\AccountModel.cs" />
     <Compile Include="Model\ImageOptionsModel.cs" />
     <Compile Include="Model\MainMenuModel.cs" />
     <Compile Include="Model\ServerHelperModel.cs" />
@@ -145,8 +151,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Migrations\202008221051152_AccountModelAdded.resx">
-      <DependentUpon>202008221051152_AccountModelAdded.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202011101233490_Account.resx">
+      <DependentUpon>202011101233490_Account.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011101235546_DirectoriesAccess.resx">
+      <DependentUpon>202011101235546_DirectoriesAccess.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

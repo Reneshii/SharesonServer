@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using SharesonServer.Enum;
 using SharesonServer.Model.Support;
+using SharesonServer.Model.Support.SQL;
 using System;
-using System.Net.Sockets;
 
 namespace SharesonServer.Repository.SupportFunctions
 {
@@ -31,10 +31,10 @@ namespace SharesonServer.Repository.SupportFunctions
             return availableMethod = ServerMethods.GetImage; // default
         }
 
-        private AccountModel DeserializeAccountServiceRequest(string request)
+        private AccountModelForShareson DeserializeAccountServiceRequest(string request)
         {
-            AccountModel accountModel = new AccountModel();
-            accountModel = JsonConvert.DeserializeObject<AccountModel>(request);
+            AccountModelForShareson accountModel = new AccountModelForShareson();
+            accountModel = JsonConvert.DeserializeObject<AccountModelForShareson>(request);
 
             return accountModel;
         }
@@ -47,19 +47,37 @@ namespace SharesonServer.Repository.SupportFunctions
             return model;
         }
 
-        public byte[] GetImage(string request)
+        public byte[] GetImage(string request, AccountModelForShareson account = null)
         {
-            ImageOptions convert = new ImageOptions();
+            byte[] result;
 
-            var model = DeserializeImagesRequest(request);
-            var result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+            if (sql.CheckIfUserIsLogedIn(account.ID,account.Email))
+            {
+                ImageOptions convert = new ImageOptions();
+
+                var model = DeserializeImagesRequest(request);
+                result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+            }
+            else
+            {
+                return null;
+            }
+            
             return result;
         }
-        public byte[] GetRandomImage(string request)
+        public byte[] GetRandomImage(string request, AccountModelForShareson account = null)
         {
-            ImageOptions convert = new ImageOptions();
-            var model = DeserializeImagesRequest(request);
-            var result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
+            byte[] result;
+            if (sql.CheckIfUserIsLogedIn(account.ID, account.Email))
+            {
+                ImageOptions convert = new ImageOptions();
+                var model = DeserializeImagesRequest(request);
+                result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
+            }
+            else
+            {
+                return null;
+            }
             return result;
         }
 
@@ -79,25 +97,35 @@ namespace SharesonServer.Repository.SupportFunctions
             return toReturn;
         }
 
-        public byte[] LoginToAccount(string request, Socket client, ref System.Collections.Generic.List<FullClientInfoModel> model)
+        public byte[] LoginToAccount(string request, bool IsSQLOn = true)
         {
             try
             {
-                var data = DeserializeAccountServiceRequest(request);
-                sql.LogInToUserAccount(data.Email, data.Password);
-                var dataToSend = sql.GetUserInfo(data.Email, data.Password);
-                string json = JsonConvert.SerializeObject(dataToSend);
+                AccountModelForShareson model = new AccountModelForShareson();
+                
+                if(IsSQLOn)
+                {
+                    var data = DeserializeAccountServiceRequest(request);
+
+                    sql.LogInToUserAccount(data.Email, data.Password);
+                    model = sql.GetUserInfo(data.Email, data.Password);
+                }
+                else
+                {
+                    System.Collections.Generic.List<string> AD = new System.Collections.Generic.List<string>();
+                    foreach (var item in All_Images.ImagesData)
+                    {
+                        AD.Add(item.DirectoryPath);
+                    }
+                    model = new AccountModelForShareson()
+                    {
+                        AccessedDirectory = AD.ToArray(),
+                    };
+                    
+                }
+                string json = JsonConvert.SerializeObject(model);
                 var result = MessageAsBytes(json);
 
-                model.Add(new FullClientInfoModel()
-                {
-                    Email = data.Email,
-                    Login = data.Login,
-                    Name = data.Name,
-                    ID = dataToSend.ID,
-                    IP = client.RemoteEndPoint.ToString(),
-
-                });
                 return result;
             }
             catch(Exception e)
@@ -126,6 +154,7 @@ namespace SharesonServer.Repository.SupportFunctions
         {
             string Method;
             string Request = rawRequest;
+            string Acc = string.Empty;
 
             if (Request.Contains("<Meth>"))
             {
@@ -139,7 +168,23 @@ namespace SharesonServer.Repository.SupportFunctions
                 Method = "";
             }
 
+            if(Request.Contains("<Req>"))
+            {
+                string removed = Request.Remove(Request.IndexOf("<Req>"));
+                int startAt = Request.IndexOf(removed);
+                int EndAt = "<Req>".Length + removed.Length;
+                Acc = Request.Remove(startAt, EndAt);
+                Request = Request.Remove(Request.IndexOf("<Req>"));
+            }
+
             string[] Result = { Method, Request };
+            
+            if(! string.IsNullOrEmpty(Acc))
+            {
+                string[] add = { Method, Request, Acc };
+
+                Result = add;
+            }
             return Result;
         }
     }

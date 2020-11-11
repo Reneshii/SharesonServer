@@ -1,7 +1,7 @@
 ﻿
-namespace SharesonServer.Model.Support
+namespace SharesonServer.Model.Support.SQL
 {
-    public class AccountModel
+    public class AccountModelForShareson
     {
         public string Email { get; set; }
         public string Name { get; set; }
@@ -9,6 +9,8 @@ namespace SharesonServer.Model.Support
         public string Login { get; set; }
         public string Password { get; set; }
         public string ID { get; set; }
-        public bool LoggedIn { get; set; }
+        public string[] AccessedDirectory{ get; set; }
+        public string Message { get; set; }
+
     }
 }

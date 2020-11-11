@@ -1,4 +1,5 @@
 ﻿using SharesonServer.Model.Support;
+using SharesonServer.Model.Support.SQL;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ namespace SharesonServer.Repository.SupportFunctions
 {
     public class SqlHelper
     {
-        public static bool SQLOn;
+        public static bool SQLStatus;
         SharesonServerDbContext DBContext;
 
         public SqlHelper()
@@ -25,13 +26,13 @@ namespace SharesonServer.Repository.SupportFunctions
                     var DBCreated = CreateDBBasedOnLatestMigrationVersionIfNotExists();
                     if(DBCreated == true)
                     {
-                        SQLOn = true;
-                        return SQLOn;
+                        SQLStatus = true;
+                        return SQLStatus;
                     }
                     else
                     {
-                        SQLOn = false;
-                        return SQLOn;
+                        SQLStatus = false;
+                        return SQLStatus;
                     }
                 }
                 else
@@ -41,8 +42,8 @@ namespace SharesonServer.Repository.SupportFunctions
                         //DropTable("__MigrationHistory");
                         CreateDBBasedOnLatestMigrationVersionIfNotExists();
                     }
-                    SQLOn = true;
-                    return SQLOn;
+                    SQLStatus = true;
+                    return SQLStatus;
                 }
             });
             return SQL_TASK;
@@ -120,36 +121,69 @@ namespace SharesonServer.Repository.SupportFunctions
         /// </summary>
         public void LogInToUserAccount(string Email, string Password)
         {
-            var acc = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault();
+            var acc = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password)?.FirstOrDefault();
             if(acc!= null)
             {
                 acc.LoggedIn = true;
                 DBContext.Accounts.Attach(acc);
                 DBContext.SaveChanges();
 
-                string accountID = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault().ID;
+                string accountID = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password)?.FirstOrDefault().ID;
                 
             }
         }
-        public AccountModel GetUserInfo(string Email, string Password)
+        public bool CheckIfUserIsLogedIn(string ID, string Email)
         {
-            var acc = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault();
-
-            if (acc == null)
+            AccountModel model;
+            if(!string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(Email))
             {
-                acc = new AccountModel()
+                model = DBContext.Accounts.Where(f => f.ID == ID && f.Email == Email).FirstOrDefault();
+                return model.LoggedIn;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public AccountModelForShareson GetUserInfo(string Email, string Password)
+        {
+            DirectoriesAccessedInAccount sqlAcc = new DirectoriesAccessedInAccount();
+            var acc = DBContext.Accounts.Where(f => f.Email == Email && f.Password == Password).FirstOrDefault();
+            if(acc != null)
+            {
+                sqlAcc = DBContext.Directories.Where(f => f.ID == acc.ID).FirstOrDefault();
+            }
+
+            AccountModelForShareson model = new AccountModelForShareson();
+            if (acc != null)
+            {
+                model = new AccountModelForShareson()
                 {
-                    Email = string.Empty,
-                    Login = string.Empty,
-                    Name = string.Empty,
-                    ID = string.Empty,
-                    Password = string.Empty,
-                    Surname = string.Empty,
+                    ID = acc.ID != null ? acc.ID : string.Empty,
+                    Name = acc.Name != null ? acc.Name : string.Empty,
+                    Email = acc.Email != null ? acc.Email : string.Empty,
+                    Login = acc.Login != null ? acc.Login : string.Empty,
+                    Surname = acc.Surname != null ? acc.Surname : string.Empty,
+                    Password = acc.Password != null ? acc.Password : string.Empty,
                 };
             }
-            
+            else
+            {
+                model = new AccountModelForShareson();
+            }
+            List<string> splitedPaths = new List<string>();
+            if (sqlAcc.Directories != null && sqlAcc.Directories.Length > 0)
+            {
+                var Directories = sqlAcc.Directories.Split(',');
+                for (int i = 0; i < Directories.Length; i++)
+                {
+                    splitedPaths.Add(Directories[i]);
+                }
+                model.AccessedDirectory = splitedPaths.ToArray();
+            }
 
-            return acc;
+            splitedPaths.Clear();
+            return model;
         }
 
         public void LogOutUser(string Email, string Password)
@@ -160,12 +194,12 @@ namespace SharesonServer.Repository.SupportFunctions
             DBContext.SaveChanges();
         }
        
-        public bool CreateAccount(AccountModel accountModel/*string Email, string Login, string Password, string Name, string Surname*/)
+        public bool CreateAccount(AccountModelForShareson accountModel)
         {
             if(!IsAccountExist(accountModel.Email, accountModel.Password))
             {
                 System.Guid guid = System.Guid.NewGuid();
-                DBContext.Accounts.Add(new Model.Support.AccountModel
+                DBContext.Accounts.Add(new AccountModel
                 {
                     ID = guid.ToString(),
                     Email = accountModel.Email, 
@@ -183,12 +217,12 @@ namespace SharesonServer.Repository.SupportFunctions
                 return false;
             }
         }
-        public string CreateAccount(AccountModel accountModel, bool preciseExceptionCase)
+        public string CreateAccount(AccountModelForShareson accountModel, bool preciseExceptionCase)
         {
             if (!IsAccountExist(accountModel.Email, accountModel.Password) && preciseExceptionCase == true)
             {
                 System.Guid guid = System.Guid.NewGuid();
-                DBContext.Accounts.Add(new Model.Support.AccountModel
+                DBContext.Accounts.Add(new AccountModel
                 {
                     ID = guid.ToString(),
                     Email = accountModel.Email,
@@ -232,9 +266,13 @@ namespace SharesonServer.Repository.SupportFunctions
             }
         }
 
-        public List<AccountModel> GetUsersInfo()
-        {
-            return DBContext.Accounts.Where(f => f.ID != null).ToList();
-        }
+        //public List<AccountModel> GetUsersInfo()
+        //{
+        //    var SQLAccModel = DBContext.Accounts.Where(f => f.ID != null).ToList();
+
+
+
+        //    return 
+        //}
     }
 }

@@ -101,5 +101,6 @@ C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\o
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\ControlsView\StartMenuControl.g.cs
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\View\ControlsView\StartMenuControl.baml
+C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.Migrations.Account.resources
+C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.Migrations.DirectoriesAccess.resources
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.csprojAssemblyReference.cache
-C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.Migrations.AccountModelAdded.resources

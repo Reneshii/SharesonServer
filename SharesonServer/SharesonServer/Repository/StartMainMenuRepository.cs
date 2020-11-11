@@ -72,7 +72,6 @@ namespace SharesonServer.Repository
 
             return true;
         }
-
         //public void UpdateSQL()
         //{
         //    Task Task_SQLStatus = Task.Factory.StartNew(() =>
@@ -80,7 +79,6 @@ namespace SharesonServer.Repository
         //        Thread.Sleep(5000);
         //    });
         //}
-
         private void StartExecuteRequests()
         {
             while (true)
@@ -104,7 +102,7 @@ namespace SharesonServer.Repository
                         }
                     }
                 }
-                Thread.Sleep(700);
+                Thread.Sleep(500);
             }
         }
 

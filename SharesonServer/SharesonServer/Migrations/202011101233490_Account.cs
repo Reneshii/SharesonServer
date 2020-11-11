@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class AccountModelAdded : DbMigration
+    public partial class Account : DbMigration
     {
         public override void Up()
         {
