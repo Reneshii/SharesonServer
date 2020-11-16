@@ -209,6 +209,11 @@ namespace SharesonServer.Repository.SupportFunctions
                     Surname = accountModel.Surname,
                     LoggedIn = false
                 });
+                DBContext.Directories.Add(new DirectoriesAccessedInAccount()
+                {
+                    ID = (from a in DBContext.Accounts where a.Email == accountModel.Email select a.ID).FirstOrDefault(),
+                    Directories = @"D:\Nowy folder\Anime\"
+                });
                 DBContext.SaveChanges();
                 return true;
             }
@@ -233,6 +238,13 @@ namespace SharesonServer.Repository.SupportFunctions
                     LoggedIn = false
                 });
                 DBContext.SaveChanges();
+                DBContext.Directories.Add(new DirectoriesAccessedInAccount()
+                {
+                    ID = (from a in DBContext.Accounts where a.Email == accountModel.Email select a.ID).FirstOrDefault(),
+                    Directories = @"D:\Nowy folder\Anime\"
+                });
+                DBContext.SaveChanges();
+
                 return "Account Created";
             }
             else if(IsAccountExist(accountModel.Email, accountModel.Password) && preciseExceptionCase == true)

@@ -321,11 +321,11 @@ namespace SharesonServer.Repository.SupportFunctions
                     {
                         if (SqlHelper.SQLStatus)
                         {
-                            Send(client, requestHelper.GetImage(separatedRequest[1], model));
+                            Send(client, requestHelper.GetImage(separatedRequest[1], model, true));
                         }
                         else
                         {
-                            Send(client, requestHelper.GetImage(separatedRequest[1]));
+                            Send(client, requestHelper.GetImage(separatedRequest[1], null, false));
                         }
                         break;
                     }
@@ -337,11 +337,11 @@ namespace SharesonServer.Repository.SupportFunctions
                     {
                         if (SqlHelper.SQLStatus)
                         {
-                            Send(client, requestHelper.GetRandomImage(separatedRequest[1],model));
+                            Send(client, requestHelper.GetRandomImage(separatedRequest[1], model, true));
                         }
                         else
                         {
-                            Send(client, requestHelper.GetRandomImage(separatedRequest[1]));
+                            Send(client, requestHelper.GetRandomImage(separatedRequest[1], null, false));
                         }
                         break;
                     }

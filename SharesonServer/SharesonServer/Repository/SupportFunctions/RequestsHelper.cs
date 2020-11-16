@@ -47,36 +47,53 @@ namespace SharesonServer.Repository.SupportFunctions
             return model;
         }
 
-        public byte[] GetImage(string request, AccountModelForShareson account = null)
+        public byte[] GetImage(string request, AccountModelForShareson account = null, bool UseSQL = false)
         {
             byte[] result;
 
-            if (sql.CheckIfUserIsLogedIn(account.ID,account.Email))
+            if (UseSQL)
             {
-                ImageOptions convert = new ImageOptions();
-
-                var model = DeserializeImagesRequest(request);
-                result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+                if(sql.CheckIfUserIsLogedIn(account.ID, account.Email))
+                {
+                    ImageOptions convert = new ImageOptions();
+                    var model = DeserializeImagesRequest(request);
+                    result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
-                return null;
+                ImageOptions convert = new ImageOptions();
+                var model = DeserializeImagesRequest(request);
+                result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
             }
-            
-            return result;
+
+                return result;
         }
-        public byte[] GetRandomImage(string request, AccountModelForShareson account = null)
+        public byte[] GetRandomImage(string request, AccountModelForShareson account = null, bool UseSQL = false)
         {
             byte[] result;
-            if (sql.CheckIfUserIsLogedIn(account.ID, account.Email))
+            if (UseSQL)
+            {
+                if(sql.CheckIfUserIsLogedIn(account.ID, account.Email))
+                {
+                    ImageOptions convert = new ImageOptions();
+                    var model = DeserializeImagesRequest(request);
+                    result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
             {
                 ImageOptions convert = new ImageOptions();
                 var model = DeserializeImagesRequest(request);
                 result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
-            }
-            else
-            {
-                return null;
             }
             return result;
         }
@@ -148,7 +165,7 @@ namespace SharesonServer.Repository.SupportFunctions
         }
 
         /// <summary>
-        /// Separate method type from request. In string array first is method name and second request.
+        /// Separate method type from request. In string array first is method name and second request and third is sql model.
         /// </summary>
         public string[] SpreadRequest(string rawRequest)
         {
@@ -182,7 +199,6 @@ namespace SharesonServer.Repository.SupportFunctions
             if(! string.IsNullOrEmpty(Acc))
             {
                 string[] add = { Method, Request, Acc };
-
                 Result = add;
             }
             return Result;

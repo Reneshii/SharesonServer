@@ -106,7 +106,6 @@
     <Compile Include="Repository\SupportFunctions\MailHelper.cs" />
     <Compile Include="Repository\SupportFunctions\RequestsHelper.cs" />
     <Compile Include="Repository\SupportFunctions\ServerHelper.cs" />
-    <Compile Include="Repository\SupportFunctions\FilesAsString.cs" />
     <Compile Include="Repository\SupportFunctions\Property_Changed.cs" />
     <Compile Include="Repository\SupportFunctions\RelayCommand.cs" />
     <Compile Include="Model\Support\SharesonServerDbContext.cs" />

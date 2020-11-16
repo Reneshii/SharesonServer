@@ -30,9 +30,8 @@ namespace SharesonServer.Repository.SupportFunctions
                     return model;
                 }
             }
-            return null;
+            return new ImageOptionsModel();
         }
-
         public byte[] GetImageWithInfoAsBytes(string PathToFolder, string FileName, string[] ExcludedExtensions = null)
         {
             ImageOptionsModel model = GetImageInfo(PathToFolder, FileName);
@@ -49,12 +48,12 @@ namespace SharesonServer.Repository.SupportFunctions
                         {
                             if (FileName.Contains(item))
                             {
-                                searchingFile = PathToFolder + "ExcludedExtension.png";
+                                return GetImageWithInfoAsBytes(PathToFolder, All_Images.GetRandom(PathToFolder), ExcludedExtensions);
                             }
                         }
 
                     FileInfo info = new FileInfo(searchingFile);
-                    if(!info.Exists)
+                    if (!info.Exists)
                     {
                         return GetImageWithInfoAsBytes(PathToFolder, All_Images.GetRandom(PathToFolder), ExcludedExtensions);
                     }
@@ -70,31 +69,21 @@ namespace SharesonServer.Repository.SupportFunctions
 
                     var json = JsonConvert.SerializeObject(model);
                     var jsonAsBytes = Encoding.ASCII.GetBytes(json);
-                    
+
                     return jsonAsBytes;
                 }
                 else
                 {
-                    searchingFile = PathToFolder + "FileDoNotExist.png";
-                    FileInfo info = new FileInfo(searchingFile);
-                    dataToReturn = new byte[info.Length];
-                    using (FileStream fstream = File.OpenRead(searchingFile))
-                    {
-                        fstream.Read(dataToReturn, 0, dataToReturn.Length);
-                    }
-
-                    model.Size = info.Length;
-                    model.Image = dataToReturn;
-
                     var json = JsonConvert.SerializeObject(model);
                     var jsonAsBytes = Encoding.ASCII.GetBytes(json);
-
                     return jsonAsBytes;
                 }
             }
             else
             {
-                return null;
+                var json = JsonConvert.SerializeObject(model);
+                var jsonAsBytes = Encoding.ASCII.GetBytes(json);
+                return jsonAsBytes;
             }
         }
     }
