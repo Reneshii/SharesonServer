@@ -2,6 +2,7 @@
 using SharesonServer.Model.ForControls;
 using SharesonServer.Model.Support;
 using SharesonServer.Repository;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -9,6 +10,7 @@ namespace SharesonServer.ViewModel.ControlsViewModel
 {
     public class ServerSettingsControlViewModel : Property_Changed
     {
+        InfoLog log;
         ServersSettingsModel model;
         ServerSettingsRepository repository;
 
@@ -99,27 +101,47 @@ namespace SharesonServer.ViewModel.ControlsViewModel
         {
             model = new ServersSettingsModel();
             repository = new ServerSettingsRepository();
+            log = new InfoLog(Properties.Settings.Default.LogsFilePath);
+            AvailableFolders = new ObservableCollection<AvailableFoldersModel>();
+
+
             model = repository.LoadSettings();
         }
 
 
         private void DeleteFile_execute(object obj)
         {
-            var listPosition = (AvailableFoldersModel)obj;
-            AvailableFolders.Remove(listPosition);
+            try
+            {
+                var listPosition = (AvailableFoldersModel)obj;
+                AvailableFolders.Remove(listPosition);
+            }
+            catch(Exception e)
+            {
+                log.Add(e.ToString());
+            }
+            
         }
 
         private void AddFile_execute(object obj)
         {
-            var path = new System.Windows.Forms.FolderBrowserDialog();
-            path.ShowDialog();
-            if(!string.IsNullOrEmpty(path.SelectedPath))
+            try
             {
-                AvailableFolders.Add(new AvailableFoldersModel()
+                var path = new System.Windows.Forms.FolderBrowserDialog();
+                path.ShowDialog();
+                if (!string.IsNullOrEmpty(path.SelectedPath))
                 {
-                    PathToFolder = path.SelectedPath + @"\",
-                });
+                    AvailableFolders.Add(new AvailableFoldersModel()
+                    {
+                        PathToFolder = path.SelectedPath + @"\",
+                    });
+                }
             }
+            catch(Exception e)
+            {
+                log.Add(e.ToString());
+            }
+            
         }
     }
 }
