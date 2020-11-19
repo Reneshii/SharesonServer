@@ -61,12 +61,20 @@ namespace SharesonServer.Repository.SupportFunctions
                     }
                 }
             }
-
+            #region local network
             Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             Model.iPAddress = Model.ipHostInfo.AddressList[0];
             Model.iPEndPoint = new IPEndPoint(Model.iPAddress, 11000);
 
             socket = new Socket(Model.iPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            #endregion
+
+            #region internet
+            //Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            ////Model.iPAddress = Model.ipHostInfo.AddressList[0];
+            //Model.iPEndPoint = new IPEndPoint(IPAddress.Any, 11000);
+            //socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            #endregion
 
             socket.Bind(Model.iPEndPoint);
 

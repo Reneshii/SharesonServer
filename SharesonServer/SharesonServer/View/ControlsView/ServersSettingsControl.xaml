@@ -41,9 +41,7 @@
             <ListBox ItemsSource="{Binding AvailableFolders, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                 <ListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Add" Command="{Binding AddPositionToList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
-                                  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 
-                                    AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.SelectedItem}"/>
+                        <MenuItem Header="Add" Command="{Binding AddPositionToList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                         
                         <MenuItem Header="Delete" Command="{Binding DeletePositionFromList, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
                                   CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, 

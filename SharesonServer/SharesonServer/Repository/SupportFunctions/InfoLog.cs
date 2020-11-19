@@ -6,7 +6,7 @@ namespace Shareson.Support
 {
     public class InfoLog
     {
-        public string PathToDirectory { get; }
+        private string PathToDirectory { get; set; }
         public string PathToFile { get; }
         public string PathToFileLog { get; set; }
 
@@ -27,7 +27,14 @@ namespace Shareson.Support
 
         public void Add(string error)
         {
+            LoadPathToDirectory();
             FindDirectory(PathToDirectory, error);
+        }
+
+        private void LoadPathToDirectory()
+        {
+            var stop = SharesonServer.Properties.Settings.Default.LogsFilePath.LastIndexOf('\\');
+            PathToDirectory = SharesonServer.Properties.Settings.Default.LogsFilePath.Remove(stop, SharesonServer.Properties.Settings.Default.LogsFilePath.Remove(0, stop).Length);
         }
 
         private void FindDirectory(string path, string error)

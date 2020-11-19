@@ -6,7 +6,6 @@ C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\b
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\bin\Release\Newtonsoft.Json.dll
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\bin\Release\EntityFramework.xml
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\bin\Release\EntityFramework.SqlServer.xml
-C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.csprojAssemblyReference.cache
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\CustomControls\Button1.baml
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\CustomControls\Button2.baml
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\View\ControlsView\LoadingWindowControl.baml
@@ -33,3 +32,4 @@ C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\o
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.csproj.CopyComplete
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.exe
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.pdb
+C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.csprojAssemblyReference.cache

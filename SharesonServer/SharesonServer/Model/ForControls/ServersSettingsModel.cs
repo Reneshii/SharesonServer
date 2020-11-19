@@ -10,8 +10,8 @@ namespace SharesonServer.Model.ForControls
         public ICommand _SaveSettings;
         public ICommand _ResetSettings;
         public string _LogsFilePath;
-        public ObservableCollection<AvailableFoldersModel> _AvailableFolders { get; set; }
+        public ObservableCollection<AvailableFoldersModel> _AvailableFolders = new ObservableCollection<AvailableFoldersModel>();
         public RelayCommand<object> _DeletePositionFromList { get; set; }
-        public RelayCommand<object> _AddPositionToList;
+        public ICommand _AddPositionToList;
     }
 }

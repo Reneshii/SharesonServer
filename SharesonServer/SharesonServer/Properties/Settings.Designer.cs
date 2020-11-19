@@ -34,17 +34,14 @@ namespace SharesonServer.Properties {
                 this["LogsFilePath"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.ObjectModel.ObservableCollection<Model.Support.AvailableFoldersModel> AvailableFoldersModel
-        {
-            get
-            {
-                return ((global::System.Collections.ObjectModel.ObservableCollection<Model.Support.AvailableFoldersModel>)(this["AvailableFoldersModel"]));
+        public global::System.Collections.ObjectModel.ObservableCollection<SharesonServer.Model.Support.AvailableFoldersModel> AvailableFoldersModel {
+            get {
+                return ((global::System.Collections.ObjectModel.ObservableCollection<SharesonServer.Model.Support.AvailableFoldersModel>)(this["AvailableFoldersModel"]));
             }
-            set
-            {
+            set {
                 this["AvailableFoldersModel"] = value;
             }
         }

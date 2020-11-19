@@ -27,13 +27,13 @@ namespace SharesonServer.ViewModel.ControlsViewModel
             }
             set { }
         } 
-        public RelayCommand<object> AddPositionToList
+        public ICommand AddPositionToList
         {
             get
             {
                 if (model._AddPositionToList == null)
                 {
-                    model._AddPositionToList = new RelayCommand<object>(AddFile_execute, f => true);
+                    model._AddPositionToList = new RelayCommand(f => true, f => { AddFile_execute(); });
                 }
                 return model._AddPositionToList;
             }
@@ -96,7 +96,6 @@ namespace SharesonServer.ViewModel.ControlsViewModel
         }
         #endregion
 
-
         public ServerSettingsControlViewModel()
         {
             model = new ServersSettingsModel();
@@ -104,10 +103,8 @@ namespace SharesonServer.ViewModel.ControlsViewModel
             log = new InfoLog(Properties.Settings.Default.LogsFilePath);
             AvailableFolders = new ObservableCollection<AvailableFoldersModel>();
 
-
             model = repository.LoadSettings();
         }
-
 
         private void DeleteFile_execute(object obj)
         {
@@ -120,10 +117,9 @@ namespace SharesonServer.ViewModel.ControlsViewModel
             {
                 log.Add(e.ToString());
             }
-            
         }
 
-        private void AddFile_execute(object obj)
+        private void AddFile_execute()
         {
             try
             {

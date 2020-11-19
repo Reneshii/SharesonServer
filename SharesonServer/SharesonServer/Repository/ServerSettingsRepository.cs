@@ -12,9 +12,18 @@ namespace SharesonServer.Repository
 
         public ServersSettingsModel LoadSettings()
         {
-            ServersSettingsModel model = new ServersSettingsModel();
-            model._AvailableFolders = Properties.Settings.Default.AvailableFoldersModel;
-            model._LogsFilePath = Properties.Settings.Default.LogsFilePath;
+            ServersSettingsModel model = new ServersSettingsModel()
+            {
+                _AvailableFolders = new System.Collections.ObjectModel.ObservableCollection<Model.Support.AvailableFoldersModel>(),
+            };
+            if (Properties.Settings.Default.AvailableFoldersModel != null)
+            {
+                model._AvailableFolders = Properties.Settings.Default.AvailableFoldersModel;
+            }
+            if(!string.IsNullOrEmpty(Properties.Settings.Default.LogsFilePath))
+            {
+                model._LogsFilePath = Properties.Settings.Default.LogsFilePath;
+            }
 
             return model;
         }

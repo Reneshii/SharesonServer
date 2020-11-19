@@ -5,7 +5,7 @@
     <Setting Name="LogsFilePath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="AvailableFolders" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="AvailableFoldersModel" Type="System.Collections.ObjectModel.ObservableCollection&lt;SharesonServer.Model.Support.AvailableFoldersModel&gt;" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

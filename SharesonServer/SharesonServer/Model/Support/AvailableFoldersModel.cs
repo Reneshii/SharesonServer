@@ -1,5 +1,4 @@
 ﻿
-
 namespace SharesonServer.Model.Support
 {
     public class AvailableFoldersModel
