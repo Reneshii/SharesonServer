@@ -37,12 +37,36 @@ namespace SharesonServer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.Collections.ObjectModel.ObservableCollection<SharesonServer.Model.Support.AvailableFoldersModel> AvailableFoldersModel {
+        public global::System.Collections.Specialized.StringCollection AvailableFoldersModel {
             get {
-                return ((global::System.Collections.ObjectModel.ObservableCollection<SharesonServer.Model.Support.AvailableFoldersModel>)(this["AvailableFoldersModel"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["AvailableFoldersModel"]));
             }
             set {
                 this["AvailableFoldersModel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ConnectionMode {
+            get {
+                return ((bool)(this["ConnectionMode"]));
+            }
+            set {
+                this["ConnectionMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BufferSize {
+            get {
+                return ((string)(this["BufferSize"]));
+            }
+            set {
+                this["BufferSize"] = value;
             }
         }
     }

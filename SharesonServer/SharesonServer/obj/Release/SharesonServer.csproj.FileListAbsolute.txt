@@ -32,4 +32,3 @@ C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\o
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.csproj.CopyComplete
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.exe
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.pdb
-C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Release\SharesonServer.csprojAssemblyReference.cache

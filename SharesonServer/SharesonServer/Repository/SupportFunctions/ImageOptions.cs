@@ -32,7 +32,7 @@ namespace SharesonServer.Repository.SupportFunctions
             }
             return new ImageOptionsModel();
         }
-        public byte[] GetImageWithInfoAsBytes(string PathToFolder, string FileName, string[] ExcludedExtensions = null)
+        public byte[] ReturnImageWithInfoAsBytes(string PathToFolder, string FileName, string[] ExcludedExtensions = null)
         {
             ImageOptionsModel model = GetImageInfo(PathToFolder, FileName);
             byte[] dataToReturn;
@@ -48,14 +48,14 @@ namespace SharesonServer.Repository.SupportFunctions
                         {
                             if (FileName.Contains(item))
                             {
-                                return GetImageWithInfoAsBytes(PathToFolder, All_Images.GetRandom(PathToFolder), ExcludedExtensions);
+                                return ReturnImageWithInfoAsBytes(PathToFolder, All_Images.GetRandom(PathToFolder), ExcludedExtensions);
                             }
                         }
 
                     FileInfo info = new FileInfo(searchingFile);
                     if (!info.Exists)
                     {
-                        return GetImageWithInfoAsBytes(PathToFolder, All_Images.GetRandom(PathToFolder), ExcludedExtensions);
+                        return ReturnImageWithInfoAsBytes(PathToFolder, All_Images.GetRandom(PathToFolder), ExcludedExtensions);
                     }
                     dataToReturn = new byte[info.Length];
 

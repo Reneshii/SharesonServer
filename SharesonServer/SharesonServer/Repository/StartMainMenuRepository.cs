@@ -4,7 +4,7 @@ using SharesonServer.Repository.SupportFunctions;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using static SharesonServer.Model.ServerHelperModel;
+using static SharesonServer.Model.ServerData.ServerHelperModel;
 
 namespace SharesonServer.Repository
 {

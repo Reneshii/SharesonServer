@@ -1,6 +1,5 @@
 ﻿using Shareson.Support;
 using SharesonServer.Model.ForControls;
-using SharesonServer.Model.Support;
 using SharesonServer.Repository;
 using System;
 using System.Collections.ObjectModel;
@@ -81,8 +80,35 @@ namespace SharesonServer.ViewModel.ControlsViewModel
                 NotifyPropertyChanged();
             }
         }
+        public string BufferSize
+        {
+            get
+            {
+                return model._BufferSize;
+            }
+            set
+            {
+                var arrayToCheck = System.Text.Encoding.ASCII.GetBytes(value);
+                var destination = Array.FindAll(arrayToCheck, f => (f > 47 && f < 58));
 
-        public ObservableCollection<AvailableFoldersModel> AvailableFolders
+                model._BufferSize = System.Text.Encoding.ASCII.GetString(destination);
+                NotifyPropertyChanged();
+            }
+        }
+        public bool ConnectionMode
+        {
+            get
+            {
+                return model._ConnectionMode;
+            }
+            set
+            {
+                model._ConnectionMode = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> AvailableFolders
         {
             get
             {
@@ -101,7 +127,7 @@ namespace SharesonServer.ViewModel.ControlsViewModel
             model = new ServersSettingsModel();
             repository = new ServerSettingsRepository();
             log = new InfoLog(Properties.Settings.Default.LogsFilePath);
-            AvailableFolders = new ObservableCollection<AvailableFoldersModel>();
+            AvailableFolders = new ObservableCollection<string>();
 
             model = repository.LoadSettings();
         }
@@ -110,7 +136,7 @@ namespace SharesonServer.ViewModel.ControlsViewModel
         {
             try
             {
-                var listPosition = (AvailableFoldersModel)obj;
+                var listPosition = (string)obj;
                 AvailableFolders.Remove(listPosition);
             }
             catch(Exception e)
@@ -127,10 +153,7 @@ namespace SharesonServer.ViewModel.ControlsViewModel
                 path.ShowDialog();
                 if (!string.IsNullOrEmpty(path.SelectedPath))
                 {
-                    AvailableFolders.Add(new AvailableFoldersModel()
-                    {
-                        PathToFolder = path.SelectedPath + @"\",
-                    });
+                    AvailableFolders.Add(path.SelectedPath + @"\");
                 }
             }
             catch(Exception e)

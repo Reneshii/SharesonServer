@@ -57,7 +57,7 @@ namespace SharesonServer.Repository.SupportFunctions
                 {
                     ImageOptions convert = new ImageOptions();
                     var model = DeserializeImagesRequest(request);
-                    result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+                    result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
                 }
                 else
                 {
@@ -68,7 +68,7 @@ namespace SharesonServer.Repository.SupportFunctions
             {
                 ImageOptions convert = new ImageOptions();
                 var model = DeserializeImagesRequest(request);
-                result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+                result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
             }
 
                 return result;
@@ -82,7 +82,7 @@ namespace SharesonServer.Repository.SupportFunctions
                 {
                     ImageOptions convert = new ImageOptions();
                     var model = DeserializeImagesRequest(request);
-                    result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
+                    result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
                 }
                 else
                 {
@@ -93,7 +93,7 @@ namespace SharesonServer.Repository.SupportFunctions
             {
                 ImageOptions convert = new ImageOptions();
                 var model = DeserializeImagesRequest(request);
-                result = convert.GetImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
+                result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
             }
             return result;
         }
@@ -132,7 +132,7 @@ namespace SharesonServer.Repository.SupportFunctions
                     System.Collections.Generic.List<string> AD = new System.Collections.Generic.List<string>();
                     foreach (var item in All_Images.ImagesData)
                     {
-                        AD.Add(item.DirectoryPath);
+                        AD.Add(item.Directory);
                     }
                     model = new AccountModelForShareson()
                     {

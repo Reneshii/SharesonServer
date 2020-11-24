@@ -9,7 +9,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using static SharesonServer.Model.ServerHelperModel;
+using static SharesonServer.Model.ServerData;
+using static SharesonServer.Model.ServerData.ServerHelperModel;
 
 namespace SharesonServer.Repository.SupportFunctions
 {
@@ -45,35 +46,38 @@ namespace SharesonServer.Repository.SupportFunctions
             Socket socket;
             foreach (var item in Settings.Default.AvailableFoldersModel)
             {
-                var filesFullNames = System.IO.Directory.GetFiles(item.PathToFolder);
+                var filesFullNames = System.IO.Directory.GetFiles(item);
 
-                All_Images.ImagesData.Add(new FoldersAndFiles()
+                All_Images.ImagesData.Add(new ServerData.TemporaryResources()
                 {
-                    DirectoryPath = item.PathToFolder,
-                    Files = filesFullNames
+                    Directory = item,
+                    FilesFoundInSharedFolders = filesFullNames
                 });
 
                 foreach (var it in All_Images.ImagesData)
                 {
-                    for (int i = 0; i < it.Files.Length; i++)
+                    for (int i = 0; i < it.FilesFoundInSharedFolders.Length; i++)
                     {
-                        it.Files[i] = Path.GetFileName(it.Files[i]);
+                        it.FilesFoundInSharedFolders[i] = Path.GetFileName(it.FilesFoundInSharedFolders[i]);
                     }
                 }
             }
             #region local network
-            Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            Model.iPAddress = Model.ipHostInfo.AddressList[0];
-            Model.iPEndPoint = new IPEndPoint(Model.iPAddress, 11000);
-
-            socket = new Socket(Model.iPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            if(ServerData.ServerOptions.WLAN == false)
+            {
+                Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+                Model.iPAddress = Model.ipHostInfo.AddressList[0];
+                Model.iPEndPoint = new IPEndPoint(Model.iPAddress, 11000);
+                socket = new Socket(Model.iPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            }
             #endregion
-
             #region internet
-            //Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            ////Model.iPAddress = Model.ipHostInfo.AddressList[0];
-            //Model.iPEndPoint = new IPEndPoint(IPAddress.Any, 11000);
-            //socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            else
+            {
+                Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+                Model.iPEndPoint = new IPEndPoint(IPAddress.Any, 11000);
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            }
             #endregion
 
             socket.Bind(Model.iPEndPoint);
@@ -198,7 +202,7 @@ namespace SharesonServer.Repository.SupportFunctions
             try
             {
                 Socket socket = client;
-                socket.BeginReceive(Model.buffer, 0, ServerHelperModel.BufferSize, 0, new AsyncCallback(ReceiveCallBack), socket);
+                socket.BeginReceive(Model.buffer, 0, ServerOptions.BufferSize, 0, new AsyncCallback(ReceiveCallBack), socket);
             }
             catch(Exception e)                                                  
             {
@@ -241,7 +245,7 @@ namespace SharesonServer.Repository.SupportFunctions
 
                             if (AwaitsNewRequests == true)
                             {
-                                client.BeginReceive(Model.buffer, 0, ServerHelperModel.BufferSize, SocketFlags.None, ReceiveCallBack, client);
+                                client.BeginReceive(Model.buffer, 0, ServerOptions.BufferSize, SocketFlags.None, ReceiveCallBack, client);
                             }
                             else
                             {
@@ -254,7 +258,7 @@ namespace SharesonServer.Repository.SupportFunctions
                             // Not all data received. Get more.  
                             if(AwaitsNewRequests == true)
                             {
-                                client.BeginReceive(Model.buffer, 0, ServerHelperModel.BufferSize, 0, new AsyncCallback(ReceiveCallBack), client);
+                                client.BeginReceive(Model.buffer, 0, ServerOptions.BufferSize, 0, new AsyncCallback(ReceiveCallBack), client);
                             }
                             else
                             {
