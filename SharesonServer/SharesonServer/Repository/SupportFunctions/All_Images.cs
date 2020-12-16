@@ -13,6 +13,7 @@ namespace SharesonServer.Repository.SupportFunctions
         {
             List<string> newFilesList = new List<string>();
             var ifExist = ImagesData.Where(f => string.Equals(f.Directory, directory)).FirstOrDefault();
+
             if(ifExist == null)
             {
                 newFilesList.Add(file);
@@ -37,19 +38,38 @@ namespace SharesonServer.Repository.SupportFunctions
                 });
             }
         }
-        public static string GetRandom(string pathToFolder)
+        public static string GetRandom(string pathToFolder, string[] excluded = null)
         {
+            string itemToReturn = "";
             Random random = new Random();
-            string itemToReturn ="";
+            ServerData.TemporaryResources instance = new ServerData.TemporaryResources();
+            List<string> temp = new List<string>();
 
-            var instance = ImagesData.Where(f => pathToFolder.Contains(f.Directory)).FirstOrDefault();
+            if(excluded != null && excluded.Length > 0)
+            {
+                foreach (var item in ImagesData)
+                {
+                    if(item.Directory.Contains(pathToFolder))
+                        instance = (ServerData.TemporaryResources)item.Clone();
+                }
+
+                temp = new List<string>(instance.FilesFoundInSharedFolders.ToList());
+
+                foreach (var excludedItem in excluded)
+                {
+                    temp.RemoveAll(f => f.Contains(excludedItem));
+                }
+
+                instance.FilesFoundInSharedFolders = temp.ToArray();
+                temp.Clear();
+                temp = null;
+            }
+            else
+            {
+                instance = ImagesData.Where(f => pathToFolder.Contains(f.Directory)).FirstOrDefault();
+            }
 
             itemToReturn = instance.FilesFoundInSharedFolders[random.Next(0, instance.FilesFoundInSharedFolders.Length)];
-
-            //foreach (var item in UsedFiles)
-            //{
-            //    AllFiles.Remove(AllFiles.Where(f => f.Files.Contains(item)).FirstOrDefault());
-            //}
             
             return itemToReturn;
 

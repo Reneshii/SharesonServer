@@ -319,13 +319,17 @@ namespace SharesonServer.Repository.SupportFunctions
 
         private void ExecuteRequest(string content, Socket client)
         {
-            var separatedRequest = requestHelper.SpreadRequest(content);
-            var MethodType = requestHelper.GetServerMethod(separatedRequest[0]);
             Model.Support.SQL.AccountModelForShareson model = new Model.Support.SQL.AccountModelForShareson();
+            var separatedRequest = requestHelper.SpreadRequest(content);
+
+            Enum.ServerMethods MethodType = requestHelper.GetServerMethod(separatedRequest[0]);
+            string requestModel = separatedRequest[1];
             if (separatedRequest.Length > 2 && !string.IsNullOrEmpty(separatedRequest[2]))
             {
                 model = Newtonsoft.Json.JsonConvert.DeserializeObject<Model.Support.SQL.AccountModelForShareson>(separatedRequest[2]);
             }
+
+            separatedRequest = null;
 
             switch (MethodType)
             {
@@ -333,11 +337,11 @@ namespace SharesonServer.Repository.SupportFunctions
                     {
                         if (SqlHelper.SQLStatus)
                         {
-                            Send(client, requestHelper.GetImage(separatedRequest[1], model, true));
+                            Send(client, requestHelper.GetImage(requestModel, model, true));
                         }
                         else
                         {
-                            Send(client, requestHelper.GetImage(separatedRequest[1], null, false));
+                            Send(client, requestHelper.GetImage(requestModel, null, false));
                         }
                         break;
                     }
@@ -349,11 +353,11 @@ namespace SharesonServer.Repository.SupportFunctions
                     {
                         if (SqlHelper.SQLStatus)
                         {
-                            Send(client, requestHelper.GetRandomImage(separatedRequest[1], model, true));
+                            Send(client, requestHelper.GetRandomImage(requestModel, model, true));
                         }
                         else
                         {
-                            Send(client, requestHelper.GetRandomImage(separatedRequest[1], null, false));
+                            Send(client, requestHelper.GetRandomImage(requestModel, null, false));
                         }
                         break;
                     }
@@ -369,11 +373,11 @@ namespace SharesonServer.Repository.SupportFunctions
                     {
                         if (SqlHelper.SQLStatus)
                         {
-                            Send(client, requestHelper.LoginToAccount(separatedRequest[1]));
+                            Send(client, requestHelper.LoginToAccount(requestModel));
                         }
                         else
                         {
-                            Send(client, requestHelper.LoginToAccount(separatedRequest[1],false));
+                            Send(client, requestHelper.LoginToAccount(requestModel, false));
                         }
                         break;
                     }
@@ -386,7 +390,7 @@ namespace SharesonServer.Repository.SupportFunctions
                     {
                         if(SqlHelper.SQLStatus)
                         {
-                            requestHelper.CreateAccount(separatedRequest[1]);
+                            requestHelper.CreateAccount(requestModel);
                             Send(client, requestHelper.MessageAsBytes("AccountCreated"));
                         }
                         else

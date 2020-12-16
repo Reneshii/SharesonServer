@@ -157,11 +157,13 @@ namespace SharesonServer.Repository.SupportFunctions
             AccountModelForShareson model = new AccountModelForShareson();
             if (acc != null)
             {
-                model = new AccountModelForShareson()
+                model = new AccountModelForShareson(
+                    acc.Email != null ? acc.Email : string.Empty,
+                    acc.ID != null ? acc.ID : string.Empty)
                 {
-                    ID = acc.ID != null ? acc.ID : string.Empty,
+                    //ID = acc.ID != null ? acc.ID : string.Empty,
                     Name = acc.Name != null ? acc.Name : string.Empty,
-                    Email = acc.Email != null ? acc.Email : string.Empty,
+                    //Email = acc.Email != null ? acc.Email : string.Empty,
                     Login = acc.Login != null ? acc.Login : string.Empty,
                     Surname = acc.Surname != null ? acc.Surname : string.Empty,
                     Password = acc.Password != null ? acc.Password : string.Empty,

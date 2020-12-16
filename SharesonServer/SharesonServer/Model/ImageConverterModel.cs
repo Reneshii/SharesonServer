@@ -1,7 +1,7 @@
 ﻿
 namespace SharesonServer.Model
 {
-    public class ImageOptionsModel
+    public class ImageConverterModel
     {
         public string Name { get; set; }
         public long Size { get; set; }

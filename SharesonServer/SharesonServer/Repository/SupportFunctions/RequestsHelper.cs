@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Shareson.Support;
 using SharesonServer.Enum;
 using SharesonServer.Model.Support;
 using SharesonServer.Model.Support.SQL;
@@ -9,10 +10,12 @@ namespace SharesonServer.Repository.SupportFunctions
     public class RequestsHelper
     {
         private SqlHelper sql;
+        InfoLog log;
 
         public RequestsHelper(SqlHelper sqlHelper)
         {
             sql = sqlHelper;
+            log = new InfoLog(Properties.Settings.Default.LogsFilePath);
         }
 
         public ServerMethods GetServerMethod(string methodName)
@@ -47,55 +50,86 @@ namespace SharesonServer.Repository.SupportFunctions
             return model;
         }
 
-        public byte[] GetImage(string request, AccountModelForShareson account = null, bool UseSQL = false)
+        public byte[] GetImage(string requestModel, AccountModelForShareson account = null, bool UseSQL = false)
         {
-            byte[] result;
+            byte[] result = new byte[0];
 
-            if (UseSQL)
+            try
             {
-                if(sql.CheckIfUserIsLogedIn(account.ID, account.Email))
+                if (UseSQL)
                 {
-                    ImageOptions convert = new ImageOptions();
-                    var model = DeserializeImagesRequest(request);
-                    result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+                    if (sql.CheckIfUserIsLogedIn(account.ID, account.Email))
+                    {
+                        ImagesConverter convert = new ImagesConverter();
+                        var model = DeserializeImagesRequest(requestModel);
+                        if(!string.IsNullOrEmpty(model.PathToDirectory) && !string.IsNullOrEmpty(model.FileName))
+                        {
+                            result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+                        }
+                        return result;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
-                    return null;
+                    ImagesConverter convert = new ImagesConverter();
+                    var model = DeserializeImagesRequest(requestModel);
+                    if (!string.IsNullOrEmpty(model.PathToDirectory) && !string.IsNullOrEmpty(model.FileName))
+                    {
+                        result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
+                    }
+                    return result;
                 }
             }
-            else
+            catch(Exception e)
             {
-                ImageOptions convert = new ImageOptions();
-                var model = DeserializeImagesRequest(request);
-                result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, model.FileName, model.ExcludedExtensions);
-            }
-
-                return result;
+                log.Add(e.ToString());
+                return null;
+            } 
         }
-        public byte[] GetRandomImage(string request, AccountModelForShareson account = null, bool UseSQL = false)
+        public byte[] GetRandomImage(string requestModel, AccountModelForShareson account = null, bool UseSQL = false)
         {
-            byte[] result;
-            if (UseSQL)
+            byte[] result = new byte[0];
+            try
             {
-                if(sql.CheckIfUserIsLogedIn(account.ID, account.Email))
+                if (UseSQL)
                 {
-                    ImageOptions convert = new ImageOptions();
-                    var model = DeserializeImagesRequest(request);
-                    result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
+                    if (sql.CheckIfUserIsLogedIn(account.ID, account.Email))
+                    {
+                        ImagesConverter convert = new ImagesConverter();
+                        var model = DeserializeImagesRequest(requestModel);
+                        if(!string.IsNullOrEmpty(model.PathToDirectory))
+                        {
+                            result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, null, model.ExcludedExtensions);
+                        }
+                        return result;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
-                    return null;
+                    ImagesConverter convert = new ImagesConverter();
+                    var model = DeserializeImagesRequest(requestModel);
+                    if(!string.IsNullOrEmpty(model.PathToDirectory))
+                    {
+                        result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, null, model.ExcludedExtensions);
+                    }
+                    return result;
                 }
             }
-            else
+            catch(Exception e)
             {
-                ImageOptions convert = new ImageOptions();
-                var model = DeserializeImagesRequest(request);
-                result = convert.ReturnImageWithInfoAsBytes(model.PathToDirectory, All_Images.GetRandom(model.PathToDirectory), model.ExcludedExtensions);
+                log.Add(e.ToString());
+                return null;
             }
-            return result;
+            
+            
         }
 
         public void PutImage()

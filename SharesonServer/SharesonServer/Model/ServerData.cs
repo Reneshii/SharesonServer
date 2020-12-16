@@ -11,6 +11,7 @@ namespace SharesonServer.Model
         {
             public static bool WLAN { get; set; }
             public static string[] AvailableFoldersModel { get; set; }
+            public static string LogFile { get; set; }
             public static int BufferSize = 10000; //AddToSettings
         }
 
@@ -18,6 +19,15 @@ namespace SharesonServer.Model
         {
             public string Directory { get; set; }
             public string[] FilesFoundInSharedFolders { get; set; }
+
+            public object Clone()
+            {
+                return new TemporaryResources
+                {
+                    Directory = this.Directory,
+                    FilesFoundInSharedFolders = this.FilesFoundInSharedFolders
+                };
+            }
         }
 
         public class ServerHelperModel

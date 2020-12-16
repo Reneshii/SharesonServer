@@ -103,4 +103,3 @@ C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\o
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.csproj.CopyComplete
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.exe
 C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.pdb
-C:\Users\Reneshi\Documents\GitHub\SharesonServer\SharesonServer\SharesonServer\obj\Debug\SharesonServer.csprojAssemblyReference.cache
