@@ -9,8 +9,9 @@ namespace SharesonServer.Model.ForControls
         public ICommand _SaveSettings;
         public ICommand _ResetSettings;
         public string _LogsFilePath;
-        public string _BufferSize;
-        public bool _ConnectionMode;
+        public int _BufferSize;
+        public int _Port;
+        public bool _WLAN;
         public ObservableCollection<string> _AvailableFolders = new ObservableCollection<string>();
         public RelayCommand<object> _DeletePositionFromList { get; set; }
         public ICommand _AddPositionToList;

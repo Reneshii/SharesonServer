@@ -7,12 +7,13 @@ namespace SharesonServer.Model
 {
     public class ServerData
     {
-        public static class ServerOptions
+        public class ServerOptions
         {
-            public static bool WLAN { get; set; }
-            public static string[] AvailableFoldersModel { get; set; }
-            public static string LogFile { get; set; }
-            public static int BufferSize = 10000; //AddToSettings
+            public bool WLAN { get; set; }
+            public string[] AvailableFoldersModel { get; set; }
+            public string LogFile { get; set; }
+            public int BufferSize { get; set; }
+            public int Port { get; set; }
         }
 
         public class TemporaryResources
@@ -37,9 +38,9 @@ namespace SharesonServer.Model
             public IPEndPoint iPEndPoint;
 
             public string receivedData;
-            public byte[] buffer = new byte[ServerOptions.BufferSize];
+            public byte[] buffer;
             public StringBuilder sb = new StringBuilder();
-            public static bool InternetMode;
+            public static bool WLAN;
 
             public class Client
             {

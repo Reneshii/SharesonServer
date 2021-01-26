@@ -15,6 +15,7 @@ namespace SharesonServer.Repository
             {
                 _AvailableFolders = new System.Collections.ObjectModel.ObservableCollection<string>()
             };
+
             if (Properties.Settings.Default.AvailableFoldersModel != null)
             {
                 foreach (var item in Properties.Settings.Default.AvailableFoldersModel)
@@ -26,13 +27,10 @@ namespace SharesonServer.Repository
             {
                 model._LogsFilePath = Properties.Settings.Default.LogsFilePath;
             }
-            if(!string.IsNullOrEmpty(Properties.Settings.Default.BufferSize))
-            {
-                model._BufferSize = Properties.Settings.Default.BufferSize;
-            }
 
-
-            model._ConnectionMode = Properties.Settings.Default.ConnectionMode;
+            model._BufferSize = Properties.Settings.Default.BufferSize;
+            model._Port = Properties.Settings.Default.Port;
+            model._WLAN = Properties.Settings.Default.ConnectionMode;
 
             return model;
         }
@@ -45,8 +43,9 @@ namespace SharesonServer.Repository
             }
 
             Properties.Settings.Default.BufferSize = model._BufferSize;
-            Properties.Settings.Default.ConnectionMode = model._ConnectionMode;
+            Properties.Settings.Default.ConnectionMode = model._WLAN;
             Properties.Settings.Default.LogsFilePath = model._LogsFilePath;
+            Properties.Settings.Default.Port = model._Port;
 
             Properties.Settings.Default.Save();
         }

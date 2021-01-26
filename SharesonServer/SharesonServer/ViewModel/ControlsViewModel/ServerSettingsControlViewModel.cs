@@ -80,7 +80,19 @@ namespace SharesonServer.ViewModel.ControlsViewModel
                 NotifyPropertyChanged();
             }
         }
-        public string BufferSize
+        public int Port
+        {
+            get
+            {
+                return model._Port;
+            }
+            set
+            {
+                model._Port = value;
+                NotifyPropertyChanged();
+            }
+        }
+        public int BufferSize
         {
             get
             {
@@ -88,10 +100,11 @@ namespace SharesonServer.ViewModel.ControlsViewModel
             }
             set
             {
-                var arrayToCheck = System.Text.Encoding.ASCII.GetBytes(value);
-                var destination = Array.FindAll(arrayToCheck, f => (f > 47 && f < 58));
+                //var arrayToCheck = System.Text.Encoding.ASCII.GetBytes(value);
+                //var destination = Array.FindAll(arrayToCheck, f => (f > 47 && f < 58));
 
-                model._BufferSize = System.Text.Encoding.ASCII.GetString(destination);
+                //model._BufferSize = System.Text.Encoding.ASCII.GetString(destination);
+                model._BufferSize = value;
                 NotifyPropertyChanged();
             }
         }
@@ -99,11 +112,11 @@ namespace SharesonServer.ViewModel.ControlsViewModel
         {
             get
             {
-                return model._ConnectionMode;
+                return model._WLAN;
             }
             set
             {
-                model._ConnectionMode = value;
+                model._WLAN = value;
                 NotifyPropertyChanged();
             }
         }

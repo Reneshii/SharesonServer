@@ -60,13 +60,25 @@ namespace SharesonServer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string BufferSize {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int BufferSize {
             get {
-                return ((string)(this["BufferSize"]));
+                return ((int)(this["BufferSize"]));
             }
             set {
                 this["BufferSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Port {
+            get {
+                return ((int)(this["Port"]));
+            }
+            set {
+                this["Port"] = value;
             }
         }
     }

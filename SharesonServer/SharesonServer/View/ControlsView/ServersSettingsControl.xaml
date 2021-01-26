@@ -20,6 +20,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15" Name="LeftMargin"/>
             <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
@@ -36,7 +37,7 @@
             <TextBox Text="{Binding LogsFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" MaxHeight="20" ToolTip="e.g : C:\Users\Reneshi\Downloads\ErrorLogClient.txt" />
         </GroupBox>
 
-        <StackPanel Grid.Column="2" Grid.Row="0" MaxHeight="50" Orientation="Horizontal">
+        <StackPanel Grid.Column="3" Grid.Row="0" MaxHeight="50" Orientation="Horizontal">
             <Label Content="Use WLAN" VerticalAlignment="Center"/>
             <CheckBox IsChecked="{Binding ConnectionMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center">
                 <CheckBox.LayoutTransform>
@@ -44,8 +45,11 @@
                 </CheckBox.LayoutTransform>
             </CheckBox>
         </StackPanel>
-        <GroupBox Header="Allowed files size" Grid.Column="2" Grid.Row="1" MaxHeight="50">
+        <GroupBox Header="Allowed files size" Grid.Column="3" Grid.Row="1" MaxHeight="50">
             <TextBox Text="{Binding BufferSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </GroupBox>
+        <GroupBox Header="Port" Grid.Row="2" Grid.Column="3" MaxHeight="50">
+            <TextBox Text="{Binding Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </GroupBox>
 
         <GroupBox Header="Shared Folders" Grid.Column="1" Grid.RowSpan="2" Grid.Row="1">

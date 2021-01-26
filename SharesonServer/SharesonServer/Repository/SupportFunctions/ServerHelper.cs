@@ -23,6 +23,7 @@ namespace SharesonServer.Repository.SupportFunctions
         private SqlHelper sql;
         private Socket serverSocket;
         private ServerHelperModel Model;
+        private ServerOptions options;
 
         public bool AwaitsNewConnections = false;
         public bool AwaitsNewRequests = false;
@@ -35,6 +36,7 @@ namespace SharesonServer.Repository.SupportFunctions
             ConnectedClients = new List<Client>();
             clientInfoModel = new List<FullClientInfoModel>();
             Model = new ServerHelperModel();
+            options = new ServerOptions();
             requestHelper = new RequestsHelper(sql);
             IsServerOn = false;
 
@@ -43,6 +45,19 @@ namespace SharesonServer.Repository.SupportFunctions
 
         public Socket SetupServer()
         {
+            //Load Options before create new instance
+            ServerSettingsRepository loader = new ServerSettingsRepository();
+            var serverSettings = loader.LoadSettings();
+            loader = null;
+
+            options.BufferSize = serverSettings._BufferSize;
+            options.AvailableFoldersModel = serverSettings._AvailableFolders.ToArray();
+            options.LogFile = serverSettings._LogsFilePath;
+            options.Port = serverSettings._Port;
+            options.WLAN = serverSettings._WLAN;
+
+            Model.buffer = new byte[options.BufferSize];
+
             Socket socket;
             foreach (var item in Settings.Default.AvailableFoldersModel)
             {
@@ -63,11 +78,11 @@ namespace SharesonServer.Repository.SupportFunctions
                 }
             }
             #region local network
-            if(ServerData.ServerOptions.WLAN == false)
+            if(options.WLAN == false)
             {
                 Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
                 Model.iPAddress = Model.ipHostInfo.AddressList[0];
-                Model.iPEndPoint = new IPEndPoint(Model.iPAddress, 11000);
+                Model.iPEndPoint = new IPEndPoint(Model.iPAddress, options.Port);
                 socket = new Socket(Model.iPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             }
             #endregion
@@ -75,7 +90,7 @@ namespace SharesonServer.Repository.SupportFunctions
             else
             {
                 Model.ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                Model.iPEndPoint = new IPEndPoint(IPAddress.Any, 11000);
+                Model.iPEndPoint = new IPEndPoint(IPAddress.Any, options.Port);
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             }
             #endregion
@@ -202,7 +217,7 @@ namespace SharesonServer.Repository.SupportFunctions
             try
             {
                 Socket socket = client;
-                socket.BeginReceive(Model.buffer, 0, ServerOptions.BufferSize, 0, new AsyncCallback(ReceiveCallBack), socket);
+                socket.BeginReceive(Model.buffer, 0, options.BufferSize, 0, new AsyncCallback(ReceiveCallBack), socket);
             }
             catch(Exception e)                                                  
             {
@@ -245,7 +260,7 @@ namespace SharesonServer.Repository.SupportFunctions
 
                             if (AwaitsNewRequests == true)
                             {
-                                client.BeginReceive(Model.buffer, 0, ServerOptions.BufferSize, SocketFlags.None, ReceiveCallBack, client);
+                                client.BeginReceive(Model.buffer, 0, options.BufferSize, SocketFlags.None, ReceiveCallBack, client);
                             }
                             else
                             {
@@ -258,7 +273,7 @@ namespace SharesonServer.Repository.SupportFunctions
                             // Not all data received. Get more.  
                             if(AwaitsNewRequests == true)
                             {
-                                client.BeginReceive(Model.buffer, 0, ServerOptions.BufferSize, 0, new AsyncCallback(ReceiveCallBack), client);
+                                client.BeginReceive(Model.buffer, 0, options.BufferSize, 0, new AsyncCallback(ReceiveCallBack), client);
                             }
                             else
                             {
